@@ -11,112 +11,71 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ConsoleApp3
 {
-    public class Test
-    {
-
-    }
-
-    public enum TYPE
-    {
-        t01 = 0,
-        t02 = 3,
-        t03 = 7
-    }
-
-    [Serializable]
-    public class Class
-    {
-        public int vInt;
-        public float vFloat;
-        public string vStr;
-    }
-
-
     class Program
     {
-        static void Main(string[] args)
+        #region FRAMEWORK
+        static readonly string TestDataStoragePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JayceExperimentProjectDataCollection";
+
+        static void SetupTestEnvironment()
         {
-            // var str = File.ReadAllLines(@"C:\Users\user\Downloads\ppablist__1_android (1).bundlelist");
-            // TEST(str);
-            
-
-
-            //            FileInfo metaFileInfo = new FileInfo(szResource + @".meta");
-            //   string ext = Path.GetExtension(szResourceFullPath);
-            //    [NonSerialized]    
-            // Convert.ToString
-            // Convert.Int32
-            // 		string sGUID = AssetDatabase.AssetPathToGUID(szAssetBundlePath);
-            // 			Directory.CreateDirectory(AssetBundleConfig.m_LocalPath + AssetBundleConfig.m_bundle_outputPath);
-            /*   BinaryFormatter bf = new BinaryFormatter();
-            //  FileStream writeFile = new FileStream(EAAssetBundleInfoMgr.GetBundleFileListPathInProject(AssetBundleConfig.INITIAL_BUNDLE_VERSION, "current"), FileMode.Create);
-         //   bf.Serialize(writeFile, m_CurrentMgr);
-            writeFile.Close(); */
-            // EditorUtility.ClearProgressBar();
-            // Ionic.Zip (namespace, nuget 으로 설치가능)
-            //    File.Copy(path2, copyPath);
-            //     File.Delete(copyPath);
-            // Convert.ToDateTime
-
-            //  FTP();
-
-            //FileInfoTask();
-            //   CharUnicodeTask();
-
-            //   DateTime_();
-        }
-
-        static void TEST(string[] stringArray)
-        {
+            if (Directory.Exists(TestDataStoragePath) == false)
             {
-                //정상적으로 마스터 파일을 불러왔을경우
-
-                Char[] delimiters = { '\t', '\t', '\t', '\t', '\t' };
-                string key = string.Empty;
-                for (int index = 1; index < stringArray.Length; index++)
-                {
-                    //순서 : 파일경로, 파일이름, CRC, 파일용량
-                    string[] items = stringArray[index].Split(delimiters);
-
-                    //11
-                    key = string.Format(@"{0}/{1}", items[0], items[2]).ToLower();
-
-                    if (items.Length == 5)
-                    {
-                        int n = 0;
-                        //       dic.Add(key, new AssetBundleMasterFile(items[0], items[1], items[2], Int32.Parse(items[3]), Int32.Parse(items[4]), string.Empty));
-                    }
-                    else if (items.Length == 6)
-                    {
-                        int n = 0;
-                        //             dic.Add(key, new AssetBundleMasterFile(items[0], items[1], items[2], Int32.Parse(items[3]), Int32.Parse(items[4]), items[5]));
-                    }
-                }
+                Directory.CreateDirectory(TestDataStoragePath);
             }
         }
+
+        static void OpenDataStorageFolder()
+        {
+            System.Diagnostics.Process.Start(TestDataStoragePath);
+        }
+        #endregion
+
+        static void Main(string[] args)
+        {
+            //// 이 함수는 건들지마 ///////////
+            SetupTestEnvironment();
+            //////////////////////////////////////
+
+            IonicSaveZip();
+            // 이 밑에서 테스트 진행 
+            //            WriteBinaryFormatter();
+        }
+
+        #region TEST_CODE_COLLECTION
 
         // 주의 ** 바이너리로 만들 class 는 [Serializable] attribute 가 추가돼있어야함. 태그 . 
         static void WriteBinaryFormatter()
         {
             // 이런 방법으로도 초기화가능함. 
-            var data = new Class[] {
-                new Class() { vInt = 10, vFloat = 20 , vStr = "first" },
-                new Class() { vInt = 20, vFloat = 30, vStr  = "second" },
-                new Class() { vInt = 30, vFloat =40  , vStr = "third" } };
+            var data = new BinaryFormatterTestClass01[] {
+                new BinaryFormatterTestClass01() { vInt = 10, vFloat = 20 , vStr = "first" },
+                new BinaryFormatterTestClass01() { vInt = 20, vFloat = 30, vStr  = "second" },
+                new BinaryFormatterTestClass01() { vInt = 30, vFloat =40  , vStr = "third" } };
 
-            string outputDir = @"C:\Users\user\Desktop\Result";
+            string outputDir = TestDataStoragePath;
 
             // 맨앞에 역슬래쉬 넣으니까 에러남 뭐임 ? 
             // 무튼 데이터(.dat) 파일 생성하고 FileMode.Create 니까 Write 권한 획득됨. 
+            //** 참고로 using 문이 FileStream 의 Dispose 를 호출하고 이 안에서 Close() 도 되기 때문에 별도로 Close 호출 안했음 **//
             using (var fs = new FileStream(outputDir + "/binaryFormatterResultFile.dat", FileMode.Create))
             {
                 var bf = new BinaryFormatter();
-
                 // 직렬화해서 쭉 넣어줌 
                 bf.Serialize(fs, data);
+                OpenDataStorageFolder();
+            }
 
-                // 폴더오픈 
-                System.Diagnostics.Process.Start(outputDir);
+            // 다시 deserialize 해서 가져오는 코드 
+            using (var fs = new FileStream(outputDir + "/binaryFormatterResultFile.dat", FileMode.Open))
+            {
+                var bf = new BinaryFormatter();
+
+                var result = bf.Deserialize(fs) as BinaryFormatterTestClass01[];
+
+                for (int i = 0; i < result.Length; i++)
+                {
+                    Console.WriteLine(result[i].vInt + " " + result[i].vFloat + " " + result[i].vStr);
+                }
             }
         }
 
@@ -127,8 +86,7 @@ namespace ConsoleApp3
 
             using (ZipFile zip = new ZipFile())
             {
-                // 바탕화면에 생성할 폴더 디렉토리임 
-                string dir = @"C:\Users\user\Desktop\Result";
+                string dir = TestDataStoragePath + "/ionicTestResult";
 
                 // 존재하면 암것도 안하고 없으면 생성 . 
                 Directory.CreateDirectory(dir);
@@ -153,8 +111,13 @@ namespace ConsoleApp3
                     // 파일을 zip 객체에 add 해줌 
                     for (int i = 0; i < files.Length; i++)
                     {
-                        zip.AddFile(files[i].FullName, @"Dir\Internal\Zip"); // Dir\Internal 은 해당 파일을 압축할때 zip 파일안에 생성해 넣을 디렉토리임
-                        // 보통 비어놓겠지? 
+                        zip.AddFile(files[i].FullName, @"DirFirst\DirSecond"); // Dir\Internal\Zip 은 해당 파일을 압축할때 
+                        // 최상위에 위치시키는게 아니라 디렉토리를 생성해서 그 안에 넣고싶을때 
+                        // 저렇게 경로로 적어주면 됨 . 
+                        // 즉 그냥 빈 문자열 "" 을 적게되면은 , 해당 파일들이 최상위에 위치하여 
+                        // 압축을 풀시 바로 해당 파일들이 나오게됨 . 
+                        
+                        // 즉 압축을 풀었을때 해당 파일들이 바로 나오게하고싶다 , 하면 빈문자열을 넣으면됨 
                     }
 
                     // 해당 디렉토리에 MaZip.zip 으로 저장함 . 
@@ -162,10 +125,9 @@ namespace ConsoleApp3
 
                     // 이 zip 파일을 extract 해서 특정 디렉토리에 더 생성 가능. 
                     zip.ExtractExistingFile = ExtractExistingFileAction.OverwriteSilently;
-                    zip.ExtractAll(dir + @"\Exctracted.zip");
+                    zip.ExtractAll(dir + @"\Exctracted");
 
-                    // 익스플로어를 켜주기위해 . 
-                    System.Diagnostics.Process.Start(dir);
+                    OpenDataStorageFolder();
                 }
             }
         }
@@ -217,10 +179,12 @@ namespace ConsoleApp3
                 reqStream.Close();
             } */
         }
-        static void DateTime_()
+
+        static void TestDateTime()
         {
             Console.WriteLine(Convert.ToDateTime("05 /01/1996 17:23:29"));
         }
+
         static void FileInfoTask()
         {
             string path = @"C:\Users\user\Desktop\TempTemp\jayce.key"; //  Path.GetTempFileName();
@@ -283,6 +247,6 @@ namespace ConsoleApp3
             }
         }
 
-
+        #endregion
     }
 }
