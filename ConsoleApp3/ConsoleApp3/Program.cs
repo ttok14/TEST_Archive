@@ -14,35 +14,20 @@ namespace ConsoleApp3
     class Program
     {
         #region FRAMEWORK
-        static readonly string TestDataStoragePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JayceExperimentProjectDataCollection";
 
-        static void SetupTestEnvironment()
-        {
-            if (Directory.Exists(TestDataStoragePath) == false)
-            {
-                Directory.CreateDirectory(TestDataStoragePath);
-            }
-        }
-
-        static void OpenDataStorageFolder()
-        {
-            System.Diagnostics.Process.Start(TestDataStoragePath);
-        }
         #endregion
 
         static void Main(string[] args)
         {
-            //// 이 함수는 건들지마 ///////////
-            SetupTestEnvironment();
+            //// 기본 테스트 환경 세팅 . ///////////
+            ProjectUtility.SetupTestEnvironment();
             //////////////////////////////////////
-
-            IonicSaveZip();
+            
             // 이 밑에서 테스트 진행 
             //            WriteBinaryFormatter();
         }
 
-        #region TEST_CODE_COLLECTION
-
+        #region 제이스 테스트 코드
         // 주의 ** 바이너리로 만들 class 는 [Serializable] attribute 가 추가돼있어야함. 태그 . 
         static void WriteBinaryFormatter()
         {
@@ -52,7 +37,7 @@ namespace ConsoleApp3
                 new BinaryFormatterTestClass01() { vInt = 20, vFloat = 30, vStr  = "second" },
                 new BinaryFormatterTestClass01() { vInt = 30, vFloat =40  , vStr = "third" } };
 
-            string outputDir = TestDataStoragePath;
+            string outputDir = ProjectUtility.TestDataStoragePath;
 
             // 맨앞에 역슬래쉬 넣으니까 에러남 뭐임 ? 
             // 무튼 데이터(.dat) 파일 생성하고 FileMode.Create 니까 Write 권한 획득됨. 
@@ -62,7 +47,7 @@ namespace ConsoleApp3
                 var bf = new BinaryFormatter();
                 // 직렬화해서 쭉 넣어줌 
                 bf.Serialize(fs, data);
-                OpenDataStorageFolder();
+                ProjectUtility.OpenDataStorageFolder();
             }
 
             // 다시 deserialize 해서 가져오는 코드 
@@ -79,6 +64,7 @@ namespace ConsoleApp3
             }
         }
 
+        // zip 파일 압축하기 압축풀기 extract 하기 등등 테스트 코드 @@ 
         // ionic zip 라이브러리 필요 . nuget에서 다운가능
         static void IonicSaveZip()
         {
@@ -86,7 +72,7 @@ namespace ConsoleApp3
 
             using (ZipFile zip = new ZipFile())
             {
-                string dir = TestDataStoragePath + "/ionicTestResult";
+                string dir = ProjectUtility.TestDataStoragePath + "/ionicTestResult";
 
                 // 존재하면 암것도 안하고 없으면 생성 . 
                 Directory.CreateDirectory(dir);
@@ -127,7 +113,7 @@ namespace ConsoleApp3
                     zip.ExtractExistingFile = ExtractExistingFileAction.OverwriteSilently;
                     zip.ExtractAll(dir + @"\Exctracted");
 
-                    OpenDataStorageFolder();
+                    ProjectUtility.OpenDataStorageFolder();
                 }
             }
         }
@@ -246,6 +232,9 @@ namespace ConsoleApp3
                 Console.WriteLine(c - 48); // 
             }
         }
+        #endregion
+
+        #region 아이작 테스트 코드 
 
         #endregion
     }
