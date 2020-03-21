@@ -181,6 +181,42 @@ namespace ConsoleApp3
          */
         static void NumberToStringUsage()
         {
+            float tf = 1234.56f;
+
+            // preview 테스트 시작 
+            /*
+             * n 은 자리수에 맞게 , 를 넣어주는거 . 뒤에 숫자를 넣으면 소수점 아래로 채워짐 . 
+             * f 은 소수점 아래로 채울 갯수 
+             * 000.00 에서 왼쪽 000 의 의미는 현재 숫자를 전부 표시하되 (전부 표시하는거는 0이 1개던 3 개던 관계 x , 걍 다표시함 디폴트임) 3 자리보다 낮다면 그 부분은 0 으로 채워라임.
+             *          오른쪽 00 는 소수점을 표시하되 2자리까지만 , 없는 부분은 0 으로 들어가게됨. 
+             * ###.## 은 000.00 이랑 비슷하지만 현재 ToString() 되는 숫자가 해당 자리수보다 작아서 존재하지않으면 0 자체를 채워넣지 않음 . 
+             *         예로 1.1f 인데 ###.### 이다 ? 그럼 1.1f 만 뜸 . 근데 000.000 이면 001.100 이 뜨겠지 ㅇㅋ ? 
+             * */
+
+            // 1,234.56 => n 이기떔에 자리수에 맞게 , 를 넣으면서 뒤에 숫자가 없으므로 기본 2 자리수까지 출력. 중요한건 그 오른쪽 숫자로부터 반올림? 될거임 . 
+            Print(tf.ToString("n"));
+            // 1,234.5600 => 4 가 붙어서 소수점 4개까지 표시 
+            Print(tf.ToString("n4"));
+            // 1,234
+            Print(tf.ToString("n0"));
+            // 1234
+            Print(tf.ToString("f0"));
+            // 1234.560
+            Print(tf.ToString("f3"));
+            // 1234.6 
+            Print(tf.ToString("0.0"));
+            // 1234.56
+            Print(tf.ToString("0.00"));
+            // 01234.560
+            Print(tf.ToString("00000.000"));
+            // 1234.6
+            Print(tf.ToString("#.#"));
+            // 1234.56 
+            Print(tf.ToString("#.###"));
+            // preview 끝 
+
+            Console.WriteLine();
+
             int n = int.MaxValue;
 
             Print(n.ToString("n"));
