@@ -13,8 +13,11 @@ namespace ConsoleApp3
 {
     class Program
     {
-        #region FRAMEWORK
-
+        #region HELPER_METHOD
+        static void Print(string str)
+        {
+            Console.WriteLine(str);
+        }
         #endregion
 
         static void Main(string[] args)
@@ -22,8 +25,9 @@ namespace ConsoleApp3
             //// 기본 테스트 환경 세팅 . ///////////
             ProjectUtility.SetupTestEnvironment();
             //////////////////////////////////////
-            
+
             // 이 밑에서 테스트 진행 
+            NumberToStringUsage();
             //            WriteBinaryFormatter();
         }
 
@@ -169,6 +173,74 @@ namespace ConsoleApp3
         static void TestDateTime()
         {
             Console.WriteLine(Convert.ToDateTime("05 /01/1996 17:23:29"));
+        }
+
+        // 숫자로 ToString 할때 여러가지 표현 방식 테스트 .
+        /*
+         * 
+         */
+        static void NumberToStringUsage()
+        {
+            int n = int.MaxValue;
+
+            Print(n.ToString("n"));
+            Print(n.ToString("n0"));
+            Print(n.ToString("n1"));
+            Print(n.ToString("n2"));
+            Print(n.ToString("n3"));
+            Print(n.ToString("f"));
+            Print(n.ToString("f3"));
+            Print(n.ToString("0.000"));
+
+            Console.WriteLine();
+
+            float f = 1234.56f;
+
+            Print(f.ToString("n"));
+            Print(f.ToString("n0"));
+            Print(f.ToString("n1"));
+            Print(f.ToString("n2"));
+
+            Print(f.ToString("f0"));
+            Print(f.ToString("f1"));
+            Print(f.ToString("f2"));
+            Print(f.ToString("f0"));
+
+            Print(f.ToString("0.0"));
+            Print(f.ToString("000.0000"));
+            Print(f.ToString("0000000000"));
+            Print(f.ToString("0,0"));
+
+            Print(f.ToString("##.####"));
+            Print(f.ToString("#.#"));
+            Print(f.ToString("#.0"));
+            Print(f.ToString("#.##"));
+            Print(f.ToString("#.00"));
+            Print(f.ToString("#.###"));
+            Print(f.ToString("#.000"));
+            Print(f.ToString("#.#0#"));
+            Print(f.ToString("#.0#0"));
+            Print(f.ToString("#.#0#0#"));
+            Print(f.ToString("#.0#0#0"));
+
+            Console.WriteLine();
+
+            float f02 = 0.12f;
+
+            Print(f02.ToString("#.0"));
+            Print(f02.ToString("#.##"));
+            Print(f02.ToString("0.#"));
+            Print(f02.ToString("#0.#0"));
+            Print(f02.ToString("0#0.#0"));
+            Print(f02.ToString("00#0.#####"));
+
+            Console.WriteLine();
+
+            int n02 = 1234;
+
+            Print(n02.ToString("##.##"));
+            Print(n02.ToString("00.00"));
+            Print(n02.ToString("000000.000"));
         }
 
         static void FileInfoTask()
