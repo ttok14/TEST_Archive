@@ -14,9 +14,22 @@ namespace ConsoleApp3
     class Program
     {
         #region HELPER_METHOD
-        static void Print(string str)
+        static void Print(object str)
         {
-            Console.WriteLine(str);
+            Console.WriteLine(str.ToString());
+        }
+
+        static void PadLines(int lineCount = 1)
+        {
+            string str = "";
+
+            for (int i = 0; i < lineCount; i++)
+            {
+                str += "\n";
+            }
+
+            if (string.IsNullOrEmpty(str) == false)
+                Console.Write(str);
         }
         #endregion
 
@@ -27,11 +40,11 @@ namespace ConsoleApp3
             //////////////////////////////////////
 
             // 이 밑에서 테스트 진행 
-            NumberToStringUsage();
-            //            WriteBinaryFormatter();
+            LinqUsage();
         }
 
         #region 제이스 테스트 코드
+
         // 주의 ** 바이너리로 만들 class 는 [Serializable] attribute 가 추가돼있어야함. 태그 . 
         static void WriteBinaryFormatter()
         {
@@ -102,11 +115,11 @@ namespace ConsoleApp3
                     for (int i = 0; i < files.Length; i++)
                     {
                         zip.AddFile(files[i].FullName, @"DirFirst\DirSecond"); // Dir\Internal\Zip 은 해당 파일을 압축할때 
-                        // 최상위에 위치시키는게 아니라 디렉토리를 생성해서 그 안에 넣고싶을때 
-                        // 저렇게 경로로 적어주면 됨 . 
-                        // 즉 그냥 빈 문자열 "" 을 적게되면은 , 해당 파일들이 최상위에 위치하여 
-                        // 압축을 풀시 바로 해당 파일들이 나오게됨 . 
-                        
+                                                                               // 최상위에 위치시키는게 아니라 디렉토리를 생성해서 그 안에 넣고싶을때 
+                                                                               // 저렇게 경로로 적어주면 됨 . 
+                                                                               // 즉 그냥 빈 문자열 "" 을 적게되면은 , 해당 파일들이 최상위에 위치하여 
+                                                                               // 압축을 풀시 바로 해당 파일들이 나오게됨 . 
+
                         // 즉 압축을 풀었을때 해당 파일들이 바로 나오게하고싶다 , 하면 빈문자열을 넣으면됨 
                     }
 
@@ -172,13 +185,159 @@ namespace ConsoleApp3
 
         static void TestDateTime()
         {
-            Console.WriteLine(Convert.ToDateTime("05 /01/1996 17:23:29"));
+            Print(Convert.ToDateTime("05 /01/1996 17:23:29"));
         }
 
-        // 숫자로 ToString 할때 여러가지 표현 방식 테스트 .
         /*
+         * Linq 는 편하지만 할당이 많이 일어나 GC 발생률을 증가시키는 함수들이 많음.
+         * 고로 런타임 Update 로직에 매 프레임에 무거운 작업을 하게되는것은 최대한 피하면서 
+         * 성능을 조금 포기하고 가독성에 투자하겠다하는 경우에 적합함. 또는 에디터 코드나 . 
+         * 각각 함수마다 GC 체크는 추가적으로 프로파일링으로 테스트 ㄱ ㄱ 
+         * (예로 Min,Max 함수같은 경우 GC 겁나 처먹음)
          * 
+         * 자주쓰이는애들 : Min,Max,Any,First,Single,
          */
+
+        static void LinqUsage()
+        {
+            #region Repeat
+            {
+                Print("TEST Repeat");
+
+                // new LinqTestClass01() { n =10 } 를 3 번 할당하여 IEnumerable 로 뱉음. 
+                // 즉 LinqTesClass01 로 순회를 돌게됨. 
+                // ** 주의할건 저 n = 에다가 Random() 과도 같은 걸 넣어서 3 개의 인스턴스의
+                // n 에 Random 값을 넣겠다, 하는건 안됨.  
+                // 내부적으로 인스턴스 하나만 생성후 애를 카피하는듯해보임 . 
+                // 무튼 대가리에 이건 안된다는걸 50%만 input 하여도 나중에 실수할 확률이 줄을것 . 
+                foreach (var item in Enumerable.Repeat(
+                    element: new LinqTestClass01() { n = 10 },
+                    count: 3))
+                    Print(item.n);
+            }
+            #endregion
+
+            PadLines();
+
+            #region Range
+            {
+                Print("Test Range");
+
+                // Range 는 정수 시퀀스 생성하는데 , start 숫자부터 + count 까지 . 즉 
+                // start 가 5 고 count 가 10 이면 5 로부터 + 10 . 즉 5 부터 15 까지의 정수 시퀀스 생성.
+                foreach (var item in Enumerable.Range(
+                    start: 5,
+                    count: 10))
+                {
+                    Print(item);
+                }
+
+                // 약간의 응용 . 알파벳 출력 
+                // 아스키코드값 'a' 로부터 시작해서 , 알파벳의 끝 'z' 에서 'a' 를 빼서 
+                // 전체 알파벳 순회 시퀀스 생성하여 순회 . 출력 . 끝 
+                foreach (char item in Enumerable.Range('a', 'z' - 'a'))
+                    Print(item);
+            }
+            #endregion
+
+            PadLines();
+
+            #region Any
+            {
+                Print("Test Any");
+
+                List<int> anyTestList = new List<int>();
+                // Any 는 element 가 하나라도 있으면 True . 비어있으면 false 임 . 
+                // 즉 Count > 0 같이 줒같은 코드 안써도되게끔 해쥼 개굳 ? 
+                Print(anyTestList.Any());
+                anyTestList.Add(1);
+                Print(anyTestList.Any());
+            }
+            #endregion
+
+            PadLines();
+
+            #region Count
+            {
+                Print("Test Count");
+
+                List<int> countTestList = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+                Print(countTestList.Count((num) =>
+                {
+                    // 클래스나 구조체면 .n 으로 접근하면 되겠지? 줜나 당연한거지만 
+                    // 무튼 이 코드는 순회하면서 5 보다 작은애의 개수를 가져오는거 
+                    return num < 5;
+                }));
+            }
+            #endregion
+
+            PadLines();
+
+            #region First
+            {
+                List<int> list = new List<int>() { 1, 2, 3, 4 };
+                // 처음 요소 뱉어주는 First 함수 .
+                Print(list.First());
+                // empty 면 exception 
+                list.Clear();
+                try
+                {
+                    Print(list.First());
+                }
+                catch (Exception exp)
+                {
+                    Print("Exception ! : " + exp.Message);
+                }
+            }
+            #endregion
+
+            PadLines();
+
+            #region Single
+            {
+                List<int> list = new List<int>() { 1, 2, 3, 4 };
+
+                // Single 함수도 First 와 같이 가장 앞에것을 뱉어주는데
+                // 요소가 무조건 하나여야만함 .  즉 하나만 있어야한다는걸 코드로 보여주는거 
+                // 0 개 또는 하나가 넘어가게되면 
+                // Exception 발생 
+                try
+                {
+                    Print(list.Single());
+                }
+                catch (Exception exp)
+                {
+                    Print("Exception ( 요소가 하나보다 많음 ) : " + exp.Message);
+                }
+
+                // 하나는 잘 출력됨  
+                list.Clear();
+                list.Add(1);
+
+                Print(list.Single());
+            }
+            #endregion
+
+
+
+            PadLines();
+        }
+
+        static void TestForeachImplement()
+        {
+
+        }
+
+        // TODO regular expression 테스트 
+        static void TestRegexUsage()
+        {
+
+        }
+
+        // TODO 
+
+        // 숫자로 ToString 할때 여러가지 표현 방식 테스트 .
         static void NumberToStringUsage()
         {
             float tf = 1234.56f;
@@ -340,6 +499,7 @@ namespace ConsoleApp3
                 Console.WriteLine(c - 48); // 
             }
         }
+
         #endregion
 
         #region 아이작 테스트 코드 

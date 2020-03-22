@@ -21,4 +21,8 @@ namespace ConsoleApp3
         public string vStr;
     }
 
+    public class LinqTestClass01
+    {
+        public int n;
+    }
 }
