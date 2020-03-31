@@ -11,7 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ConsoleApp3
 {
-    class ProjectUtility
+    static class ProjectUtility
     {
         public static readonly string TestDataStoragePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JayceExperimentProjectDataCollection";
 
@@ -26,6 +26,22 @@ namespace ConsoleApp3
         public static void OpenDataStorageFolder()
         {
             System.Diagnostics.Process.Start(TestDataStoragePath);
+        }
+
+        public static void Shuffle<T>(this List<T> list)
+        {
+            int rndIdx;
+            T temp;
+            Random rand = new Random(); 
+
+            for (int i = 0; i < list.Count; ++i)
+            {
+                rndIdx = rand.Next(0, list.Count);
+
+                temp = list[i];
+                list[i] = list[rndIdx];
+                list[rndIdx] = temp;
+            }
         }
     }
 }

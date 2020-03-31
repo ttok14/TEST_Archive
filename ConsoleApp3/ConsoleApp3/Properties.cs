@@ -25,4 +25,15 @@ namespace ConsoleApp3
     {
         public int n;
     }
+
+    [AttributeUsage( AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field)]
+    public class TestAttribute : Attribute
+    {
+        public string attName;
+
+      ////  public TestAttribute(string attName)
+     //   {
+    //        this.attName = attName;
+   //     }
+    }
 }

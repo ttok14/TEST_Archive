@@ -8,6 +8,7 @@ using System.Net;
 using Ionic.Zip;
 using Ionic.Crc;
 using System.Runtime.Serialization.Formatters.Binary;
+using ConsoleApp3.ClassUnitTest;
 
 namespace ConsoleApp3
 {
@@ -40,7 +41,8 @@ namespace ConsoleApp3
             //////////////////////////////////////
 
             // 이 밑에서 테스트 진행 
-            LinqUsage();
+            // LinqUsage();
+            SortTest();
         }
 
         #region 제이스 테스트 코드
@@ -319,8 +321,6 @@ namespace ConsoleApp3
             }
             #endregion
 
-
-
             PadLines();
         }
 
@@ -498,6 +498,104 @@ namespace ConsoleApp3
                 Console.WriteLine(Convert.ToInt32(c.ToString()));
                 Console.WriteLine(c - 48); // 
             }
+        }
+
+        // 정규식 테스트 
+        static void RegexTest()
+        {
+
+        }
+
+        // 리스트 sort 테스트 
+        static void SortTest()
+        {
+            SortTestClass forSortMethod = new SortTestClass();
+            List<SortTestClass> scores = new List<SortTestClass>();
+            Random random = new Random();
+
+            Print("Original data");
+            PadLines();
+
+            for (int i = 0; i < 10; i++)
+            {
+                scores.Add(new SortTestClass() { score = random.Next() % 1000 });
+                Print(scores[i].score);
+            }
+
+            PadLines();
+
+            // IComparable 인터페이스 CompareTo 함수를 이용하여 정렬. 
+            Print("Sort!");
+            scores.Sort();
+            scores.ForEach(t => Print(t.score));
+            scores.Shuffle();
+
+            PadLines();
+            Print("Shuffle!");
+            PadLines();
+
+            // static 함수로 정렬 . 
+            Print("Sort!");
+            scores.Sort(SortTestClass.CompareByComparison_Static);
+            scores.ForEach(t => Print(t.score));
+            scores.Shuffle();
+
+            PadLines();
+            Print("Shuffle!");
+            PadLines();
+
+            // non static 일반 함수로 정렬 . 
+            Print("Sort!");
+            scores.Sort(forSortMethod.CompareByComparison_NonStatic);
+            scores.ForEach(t => Print(t.score));
+            scores.Shuffle();
+
+            PadLines();
+            Print("Shuffle!");
+            PadLines();
+
+            Print("Sort!");
+            // Comparison 델리게이트 형태에만 맞춰주면 되니까 
+            // 익명함수도 가능함. 
+            scores.Sort((t1, t2) =>
+            {
+                if (t1.score < t2.score)
+                {
+                    return 1;
+                }
+                else if (t1.score > t2.score)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            });
+            scores.ForEach(t => Print(t.score));
+            scores.Shuffle();
+
+            PadLines();
+            Print("Shuffle!");
+            PadLines();
+
+            Print("Sort!");
+            scores.Sort(new SortTestClass_Comparer());
+            scores.ForEach(t => Print(t.score));
+            scores.Shuffle();
+
+            PadLines();
+            Print("Shuffle!");
+            PadLines();
+
+            Print("ONLY Half Sort!");
+            scores.Sort(0, (int)(scores.Count * 0.5f), new SortTestClass_Comparer());
+            scores.ForEach(t => Print(t.score));
+            scores.Shuffle();
+
+            PadLines();
+            Print("Shuffle!");
+            PadLines();
         }
 
         #endregion
