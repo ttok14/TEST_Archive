@@ -42,7 +42,8 @@ namespace ConsoleApp3
 
             // 이 밑에서 테스트 진행 
             // LinqUsage();
-            SortTest();
+            //SortTest(); 
+            EncodingTest();
         }
 
         #region 제이스 테스트 코드
@@ -502,6 +503,12 @@ namespace ConsoleApp3
 
         // 정규식 테스트 
         static void RegexTest()
+        {
+
+        }
+
+        // 인코딩 테스트 
+        static void EncodingTest()
         {
 
         }

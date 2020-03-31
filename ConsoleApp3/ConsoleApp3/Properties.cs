@@ -14,6 +14,14 @@ namespace ConsoleApp3
     }
 
     [Serializable]
+    public class GlobalTestClass
+    {
+        public int n;
+        public string str;
+        public float f;
+    }
+
+    [Serializable]
     public class BinaryFormatterTestClass01
     {
         public int vInt;
