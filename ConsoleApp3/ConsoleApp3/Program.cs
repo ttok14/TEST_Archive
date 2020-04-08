@@ -597,25 +597,38 @@ namespace ConsoleApp3
             {
                 ///////////// RijndaelManaged 암호화 ///////////
 
-                string RijndaelManagedKey = "a1D5g7Nkl8o6T2bgRF6qshmlpo87sfvs"; // 키값 , 열쇠라 생각하면됨 . 이 열쇠로 잠그고 여는거임. 
-                byte[] keyArray = Encoding.UTF8.GetBytes(RijndaelManagedKey);
-                var rDel = new RijndaelManaged();
+                // AES( Advanced Encryption Standard ) 오리지널 이름은 Rijndael 
+                string aesKey = "a1D5g7Nkl8o6T2bgRF6qshmlpo87sfvs"; // 키값 , 열쇠라 생각하면됨 . 이 열쇠로 잠그고 여는거임. 
+                byte[] keyArray = Encoding.UTF8.GetBytes(aesKey);
 
-                ///// 부호화 관련 세팅 
-                rDel.Key = keyArray;
-                rDel.Mode = CipherMode.ECB; // 암호화 모드? 즉 직접적인 알고리즘과도 연관있는듯함. 
-                rDel.Padding = PaddingMode.PKCS7; // 해당 대칭알고리즘에서 사용될 Padding. 디폴트 : PKCS7
-                ICryptoTransform cTransform = rDel.CreateEncryptor();
-                byte[] encryptedBytes = cTransform.TransformFinalBlock(sourceBytes, 0, sourceBytes.Length);
+                // dispose 유의 
+                using (var rDel = new RijndaelManaged())
+                {
+                    ///// 부호화 관련 세팅 
+                    rDel.Key = keyArray;
+                    rDel.Mode = CipherMode.ECB; // 암호화 모드? 즉 직접적인 알고리즘과도 연관있는듯함. 
+                    rDel.Padding = PaddingMode.PKCS7; // 해당 대칭알고리즘에서 사용될 Padding. 디폴트 : PKCS7
+                    ICryptoTransform cTransform = rDel.CreateEncryptor();
+                    byte[] encryptedBytes = cTransform.TransformFinalBlock(sourceBytes, 0, sourceBytes.Length);
 
-                Print("RijndaelManagedKey 부호화(암호화) 바이트 크기 : " + encryptedBytes.Length);
+                    Print("RijndaelManagedKey 부호화(암호화) 바이트 크기 : " + encryptedBytes.Length);
 
-                ///// 복호화 관련 세팅 
-                cTransform = rDel.CreateDecryptor();
-                byte[] decryptedByte = cTransform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-                var decryptedResult = ProjectUtility.Deserialize_BinaryFormatter(decryptedByte) as EncryptionTestClass;
+                    ///// 복호화 관련 세팅 
+                    cTransform = rDel.CreateDecryptor();
+                    byte[] decryptedByte = cTransform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+                    var decryptedResult = ProjectUtility.Deserialize_BinaryFormatter(decryptedByte) as EncryptionTestClass;
 
-                Print("RijndaelManagedKey 복호화 결과 : " + decryptedResult.ToString());
+                    Print("RijndaelManagedKey 복호화 결과 : " + decryptedResult.ToString());
+                }
+            }
+
+            {
+                // dispose 유의 
+                using (MD5 md5Hash = MD5.Create())
+                {
+                    // https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.md5?view=netframework-4.8 참고 
+                    Print("Fix!!");
+                }
             }
         }
 
