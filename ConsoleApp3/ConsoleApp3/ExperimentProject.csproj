@@ -36,6 +36,10 @@
     <Reference Include="Ionic.Zip, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <HintPath>..\packages\Ionic.Zip.1.9.1.8\lib\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,8 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassUnitTest\AttributeTestClass.cs" />
-    <Compile Include="ClassUnitTest\SortTestClass.cs" />
+    <Compile Include="ClassUnitTest\ExcelTest\ExcelTestClass.cs" />
+    <Compile Include="ClassUnitTest\Reflection\ReflectionTest.cs" />
+    <Compile Include="ClassUnitTest\AttributeTest\AttributeTestClass.cs" />
+    <Compile Include="ClassUnitTest\Sorting\SortTestClass.cs" />
     <Compile Include="ProjectUtility.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Program.cs" />

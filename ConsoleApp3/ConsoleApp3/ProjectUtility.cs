@@ -43,5 +43,25 @@ namespace ConsoleApp3
                 list[rndIdx] = temp;
             }
         }
+
+        public static byte[] Serialize_BinaryFormatter(object obj)
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+
+            using (var ms = new MemoryStream())
+            {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+        }
+
+        public static object Deserialize_BinaryFormatter(byte[] data)
+        {
+            using (var ms = new MemoryStream(data))
+            {
+                var binForm = new BinaryFormatter();
+                return binForm.Deserialize(ms);
+            }
+        }
     }
 }

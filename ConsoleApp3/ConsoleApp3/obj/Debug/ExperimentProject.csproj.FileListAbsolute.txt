@@ -1,0 +1,9 @@
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe.config
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.pdb
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\Ionic.Zip.dll
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csprojAssemblyReference.cache
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CoreCompileInputs.cache
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CopyComplete
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.exe
+E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.pdb

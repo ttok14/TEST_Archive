@@ -9,15 +9,24 @@ using Ionic.Zip;
 using Ionic.Crc;
 using System.Runtime.Serialization.Formatters.Binary;
 using ConsoleApp3.ClassUnitTest;
+using System.Text.RegularExpressions;
+using System.Security.Cryptography; // 암호화 
 
 namespace ConsoleApp3
 {
     class Program
     {
         #region HELPER_METHOD
-        static void Print(object str)
+        static void Print(object str, int linePaddingCount = 0)
         {
-            Console.WriteLine(str.ToString());
+            string paddingStr = "";
+
+            for (int i = 0; i < linePaddingCount; i++)
+            {
+                paddingStr += "\n";
+            }
+
+            Console.WriteLine(str.ToString() + paddingStr);
         }
 
         static void PadLines(int lineCount = 1)
@@ -41,15 +50,16 @@ namespace ConsoleApp3
             //////////////////////////////////////
 
             // 이 밑에서 테스트 진행 
+            EncryptionDecryptionTest();
             // LinqUsage();
-            //SortTest(); 
-            EncodingTest();
+            // ExcelTest();
+            // ReflectionTest();
         }
 
         #region 제이스 테스트 코드
 
         // 주의 ** 바이너리로 만들 class 는 [Serializable] attribute 가 추가돼있어야함. 태그 . 
-        static void WriteBinaryFormatter()
+        static void WriteBinaryFormatterAndSaveAsFile()
         {
             // 이런 방법으로도 초기화가능함. 
             var data = new BinaryFormatterTestClass01[] {
@@ -81,6 +91,42 @@ namespace ConsoleApp3
                 {
                     Console.WriteLine(result[i].vInt + " " + result[i].vFloat + " " + result[i].vStr);
                 }
+            }
+        }
+
+        // MemoryStream, BinaryFormatter 로 serialized,deserialize 테스트 
+        static void SerializeDeserializeByFormatterTest()
+        {
+            // 원래 데이터 
+            string oriData = "IamSoGosu";
+            byte[] bytes;
+
+            Print("Original Text : " + oriData);
+
+            ///////////////// 바이트로 직렬화하기  ////////////////////
+
+            // 메모리 스트림 할당함 . formatter 가 직렬화 데이터를 넣을 스트림 
+            // using 은 MemoryStream 에 Dispose 가 있기때문 
+            using (var memoryStream = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                // 직렬화함 . stream 에 씀 . 
+                formatter.Serialize(memoryStream, oriData);
+                // 메모리 스트림에 쓴걸 바이트로 변환 
+                bytes = memoryStream.ToArray();
+                Print("Serialized Object Byte Length : " + bytes.Length);
+            }
+
+            //////////////// 원래 데이터로 역직렬화 //////////////////
+
+            // 메모리 스트림 다시 할당 
+            // 생성자에 바이트 넘겨주면 걍 바로 스트림에 씀 
+            using (var memoryStream = new MemoryStream(bytes))
+            {
+                var formatter = new BinaryFormatter();
+                // deserialize 를 하고 그걸 string 으로 형변환 
+                var deserializedString = formatter.Deserialize(memoryStream) as string;
+                Print("Deserialized Result String : " + deserializedString);
             }
         }
 
@@ -200,7 +246,6 @@ namespace ConsoleApp3
          * 
          * 자주쓰이는애들 : Min,Max,Any,First,Single,
          */
-
         static void LinqUsage()
         {
             #region Repeat
@@ -211,7 +256,7 @@ namespace ConsoleApp3
                 // 즉 LinqTesClass01 로 순회를 돌게됨. 
                 // ** 주의할건 저 n = 에다가 Random() 과도 같은 걸 넣어서 3 개의 인스턴스의
                 // n 에 Random 값을 넣겠다, 하는건 안됨.  
-                // 내부적으로 인스턴스 하나만 생성후 애를 카피하는듯해보임 . 
+                // 내부적으로 인스턴스 하나만 생성후 애를 = 연산자로 넣어주는듯. 즉 참조형일때는 인스턴스 하나만 가리키게됨.  
                 // 무튼 대가리에 이건 안된다는걸 50%만 input 하여도 나중에 실수할 확률이 줄을것 . 
                 foreach (var item in Enumerable.Repeat(
                     element: new LinqTestClass01() { n = 10 },
@@ -325,18 +370,11 @@ namespace ConsoleApp3
             PadLines();
         }
 
+        // Fix 
         static void TestForeachImplement()
         {
 
         }
-
-        // TODO regular expression 테스트 
-        static void TestRegexUsage()
-        {
-
-        }
-
-        // TODO 
 
         // 숫자로 ToString 할때 여러가지 표현 방식 테스트 .
         static void NumberToStringUsage()
@@ -502,9 +540,83 @@ namespace ConsoleApp3
         }
 
         // 정규식 테스트 
+        // Fix 
         static void RegexTest()
         {
+            string[] address =
+            {
+                "riot@gmail.com"
+                ,"blizzard@gmail.com"
+                ,"corgi@gmail.com"
+            };
 
+            string pattern = @"s*e";
+
+            var m = Regex.Match("ssse", pattern, RegexOptions.IgnoreCase);
+
+            if (m.Success)
+            {
+                Print(m.Value);
+            }
+            else
+            {
+                Print("fail");
+            }
+        }
+
+        // Fix
+        static void ReflectionTest()
+        {
+            ReflectionTest test = new ReflectionTest();
+        }
+
+        // Fix
+        static void ExcelTest()
+        {
+            ExcelTestClass excel = new ExcelTestClass();
+
+            excel.Setup();
+        }
+
+        // 암호화 테스트 . 주로 객체를 바이트로 serialize 한 후 해당 바이트를 
+        // 부호화한 다음(암호화) 다시 복호화하여 원래 데이터를 가져오는게 주 목적 
+        static void EncryptionDecryptionTest()
+        {
+            EncryptionTestClass testClass = new EncryptionTestClass()
+            {
+                name = "MyNameIs Zian",
+                age = 15531
+            };
+            EncryptionTestClass decryptedClass;
+
+            byte[] sourceBytes = ProjectUtility.Serialize_BinaryFormatter(testClass);
+
+            Print("원래 데이터 - " + testClass.ToString());
+            Print("원래 데이터 바이트 크기 : " + sourceBytes.Length, 1);
+
+            {
+                ///////////// RijndaelManaged 암호화 ///////////
+
+                string RijndaelManagedKey = "a1D5g7Nkl8o6T2bgRF6qshmlpo87sfvs"; // 키값 , 열쇠라 생각하면됨 . 이 열쇠로 잠그고 여는거임. 
+                byte[] keyArray = Encoding.UTF8.GetBytes(RijndaelManagedKey);
+                var rDel = new RijndaelManaged();
+
+                ///// 부호화 관련 세팅 
+                rDel.Key = keyArray;
+                rDel.Mode = CipherMode.ECB; // 암호화 모드? 즉 직접적인 알고리즘과도 연관있는듯함. 
+                rDel.Padding = PaddingMode.PKCS7; // 해당 대칭알고리즘에서 사용될 Padding. 디폴트 : PKCS7
+                ICryptoTransform cTransform = rDel.CreateEncryptor();
+                byte[] encryptedBytes = cTransform.TransformFinalBlock(sourceBytes, 0, sourceBytes.Length);
+
+                Print("RijndaelManagedKey 부호화(암호화) 바이트 크기 : " + encryptedBytes.Length);
+
+                ///// 복호화 관련 세팅 
+                cTransform = rDel.CreateDecryptor();
+                byte[] decryptedByte = cTransform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+                var decryptedResult = ProjectUtility.Deserialize_BinaryFormatter(decryptedByte) as EncryptionTestClass;
+
+                Print("RijndaelManagedKey 복호화 결과 : " + decryptedResult.ToString());
+            }
         }
 
         // 인코딩 테스트 

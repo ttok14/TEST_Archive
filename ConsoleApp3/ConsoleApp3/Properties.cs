@@ -28,20 +28,21 @@ namespace ConsoleApp3
         public float vFloat;
         public string vStr;
     }
+    
+    [Serializable]
+    public class EncryptionTestClass
+    {
+        public string name;
+        public int age;
+
+        public override string ToString()
+        {
+            return string.Format("Name : {0} , Age : {1}", name, age);
+        }
+    }
 
     public class LinqTestClass01
     {
         public int n;
-    }
-
-    [AttributeUsage( AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field)]
-    public class TestAttribute : Attribute
-    {
-        public string attName;
-
-      ////  public TestAttribute(string attName)
-     //   {
-    //        this.attName = attName;
-   //     }
     }
 }
