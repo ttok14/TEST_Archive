@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using ConsoleApp3.ClassUnitTest;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography; // 암호화 
+using System.Diagnostics;
 
 namespace ConsoleApp3
 {
@@ -50,10 +51,12 @@ namespace ConsoleApp3
             //////////////////////////////////////
 
             // 이 밑에서 테스트 진행 
-            EncryptionDecryptionTest();
+            //BasicMathOperationSpeedTest();
+            //   EncryptionDecryptionTest();
             // LinqUsage();
             // ExcelTest();
             // ReflectionTest();
+            RegexTest();
         }
 
         #region 제이스 테스트 코드
@@ -550,17 +553,20 @@ namespace ConsoleApp3
                 ,"corgi@gmail.com"
             };
 
-            string pattern = @"s*e";
-
-            var m = Regex.Match("ssse", pattern, RegexOptions.IgnoreCase);
-
-            if (m.Success)
             {
-                Print(m.Value);
-            }
-            else
-            {
-                Print("fail");
+                var r = Regex.Match("ABc854dEF24gh", @"\d");
+
+                if (r.Success)
+                {
+                    Match mat = r;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        var m = mat.Value;
+                        Print(m + " , " + mat.Index);
+                        mat = mat.NextMatch();
+                    }
+                }
+                else Print("fail");
             }
         }
 
@@ -636,6 +642,67 @@ namespace ConsoleApp3
         static void EncodingTest()
         {
 
+        }
+
+        // 연산 속도 테스트 
+        // 곱셈이 조금더 빠르다는걸 증명 . 
+        // 근데 별로 차이안나네 ? 
+        static void BasicMathOperationSpeedTest()
+        {
+            Stopwatch watch = new Stopwatch();
+
+            // 1억번 돈다 
+            int cnt = 100000000;
+
+            watch.Start();
+
+            float f = 1000;
+
+            for (int i = 0; i < cnt; i++)
+            {
+                f *= 0.5f;
+            }
+
+            watch.Stop();
+
+            Print("곱셈 걸린 시간(밀리세컨즈) : " + watch.ElapsedMilliseconds);
+
+            watch.Reset();
+            watch.Start();
+
+            f = 1000;
+
+            for (int i = 0; i < cnt; i++)
+            {
+                f /= 2;
+            }
+
+            watch.Stop();
+
+            Print("나눗셈 걸린 시간(밀리세컨즈) : " + watch.ElapsedMilliseconds);
+        }
+
+        // 비트연산 테스트 
+        static void BitOperationTest()
+        {
+            int n = 0xf;
+            int t = 32;
+
+            int move = 1 << 1;
+
+            Print(n.ToString().ToBinary());
+            Print(t.ToString().ToBinary());
+            Print(n & t);
+
+            int n2 = 0x100;
+            int t2 = 0x101;
+
+            Print(n2 & t2);
+
+            int n3 = 0xf;
+            int t3 = 8;
+
+            Print(n3 & t3);
         }
 
         // 리스트 sort 테스트 
