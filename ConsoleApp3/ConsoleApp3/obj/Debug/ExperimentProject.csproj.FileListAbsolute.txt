@@ -7,3 +7,12 @@ E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\Exp
 E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CopyComplete
 E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.exe
 E:\Project\TestArchive\ConsoleTEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.pdb
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe.config
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.pdb
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\Ionic.Zip.dll
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csprojAssemblyReference.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CoreCompileInputs.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CopyComplete
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.exe
+D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.pdb

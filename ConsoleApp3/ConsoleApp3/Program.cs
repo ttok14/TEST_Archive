@@ -56,7 +56,8 @@ namespace ConsoleApp3
             // LinqUsage();
             // ExcelTest();
             // ReflectionTest();
-            RegexTest();
+            // RegexTest();
+            
         }
 
         #region 제이스 테스트 코드
@@ -540,6 +541,13 @@ namespace ConsoleApp3
                 Console.WriteLine(Convert.ToInt32(c.ToString()));
                 Console.WriteLine(c - 48); // 
             }
+        }
+
+        // 클로저 테스트, il 코드로 까면 displayClass 로 불리우는 클래스로 대체됨. 
+        // Fix
+        static void DisplayClassTest()
+        {
+            
         }
 
         // 정규식 테스트 
