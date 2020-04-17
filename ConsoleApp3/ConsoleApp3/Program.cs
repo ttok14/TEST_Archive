@@ -20,6 +20,11 @@ namespace ConsoleApp3
         #region HELPER_METHOD
         static void Print(object str, int linePaddingCount = 0)
         {
+            PrintL(str, linePaddingCount);
+        }
+
+        static void PrintL(object str, int linePaddingCount = 0)
+        {
             string paddingStr = "";
 
             for (int i = 0; i < linePaddingCount; i++)
@@ -28,6 +33,18 @@ namespace ConsoleApp3
             }
 
             Console.WriteLine(str.ToString() + paddingStr);
+        }
+
+        static void PrintW(object str, int spacePaddingCount = 0)
+        {
+            string paddingStr = "";
+
+            for (int i = 0; i < spacePaddingCount; i++)
+            {
+                paddingStr += " ";
+            }
+
+            Console.Write(str.ToString() + paddingStr);
         }
 
         static void PadLines(int lineCount = 1)
@@ -57,7 +74,7 @@ namespace ConsoleApp3
             // ExcelTest();
             // ReflectionTest();
             // RegexTest();
-            
+            CharacterTest();
         }
 
         #region 제이스 테스트 코드
@@ -105,7 +122,7 @@ namespace ConsoleApp3
             string oriData = "IamSoGosu";
             byte[] bytes;
 
-            Print("Original Text : " + oriData);
+            PrintL("Original Text : " + oriData);
 
             ///////////////// 바이트로 직렬화하기  ////////////////////
 
@@ -118,7 +135,7 @@ namespace ConsoleApp3
                 formatter.Serialize(memoryStream, oriData);
                 // 메모리 스트림에 쓴걸 바이트로 변환 
                 bytes = memoryStream.ToArray();
-                Print("Serialized Object Byte Length : " + bytes.Length);
+                PrintL("Serialized Object Byte Length : " + bytes.Length);
             }
 
             //////////////// 원래 데이터로 역직렬화 //////////////////
@@ -130,7 +147,7 @@ namespace ConsoleApp3
                 var formatter = new BinaryFormatter();
                 // deserialize 를 하고 그걸 string 으로 형변환 
                 var deserializedString = formatter.Deserialize(memoryStream) as string;
-                Print("Deserialized Result String : " + deserializedString);
+                PrintL("Deserialized Result String : " + deserializedString);
             }
         }
 
@@ -238,7 +255,7 @@ namespace ConsoleApp3
 
         static void TestDateTime()
         {
-            Print(Convert.ToDateTime("05 /01/1996 17:23:29"));
+            PrintL(Convert.ToDateTime("05 /01/1996 17:23:29"));
         }
 
         /*
@@ -254,7 +271,7 @@ namespace ConsoleApp3
         {
             #region Repeat
             {
-                Print("TEST Repeat");
+                PrintL("TEST Repeat");
 
                 // new LinqTestClass01() { n =10 } 를 3 번 할당하여 IEnumerable 로 뱉음. 
                 // 즉 LinqTesClass01 로 순회를 돌게됨. 
@@ -265,7 +282,7 @@ namespace ConsoleApp3
                 foreach (var item in Enumerable.Repeat(
                     element: new LinqTestClass01() { n = 10 },
                     count: 3))
-                    Print(item.n);
+                    PrintL(item.n);
             }
             #endregion
 
@@ -273,7 +290,7 @@ namespace ConsoleApp3
 
             #region Range
             {
-                Print("Test Range");
+                PrintL("Test Range");
 
                 // Range 는 정수 시퀀스 생성하는데 , start 숫자부터 + count 까지 . 즉 
                 // start 가 5 고 count 가 10 이면 5 로부터 + 10 . 즉 5 부터 15 까지의 정수 시퀀스 생성.
@@ -281,14 +298,14 @@ namespace ConsoleApp3
                     start: 5,
                     count: 10))
                 {
-                    Print(item);
+                    PrintL(item);
                 }
 
                 // 약간의 응용 . 알파벳 출력 
                 // 아스키코드값 'a' 로부터 시작해서 , 알파벳의 끝 'z' 에서 'a' 를 빼서 
                 // 전체 알파벳 순회 시퀀스 생성하여 순회 . 출력 . 끝 
                 foreach (char item in Enumerable.Range('a', 'z' - 'a'))
-                    Print(item);
+                    PrintL(item);
             }
             #endregion
 
@@ -296,14 +313,14 @@ namespace ConsoleApp3
 
             #region Any
             {
-                Print("Test Any");
+                PrintL("Test Any");
 
                 List<int> anyTestList = new List<int>();
                 // Any 는 element 가 하나라도 있으면 True . 비어있으면 false 임 . 
                 // 즉 Count > 0 같이 줒같은 코드 안써도되게끔 해쥼 개굳 ? 
-                Print(anyTestList.Any());
+                PrintL(anyTestList.Any());
                 anyTestList.Add(1);
-                Print(anyTestList.Any());
+                PrintL(anyTestList.Any());
             }
             #endregion
 
@@ -311,11 +328,11 @@ namespace ConsoleApp3
 
             #region Count
             {
-                Print("Test Count");
+                PrintL("Test Count");
 
                 List<int> countTestList = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
-                Print(countTestList.Count((num) =>
+                PrintL(countTestList.Count((num) =>
                 {
                     // 클래스나 구조체면 .n 으로 접근하면 되겠지? 줜나 당연한거지만 
                     // 무튼 이 코드는 순회하면서 5 보다 작은애의 개수를 가져오는거 
@@ -330,16 +347,16 @@ namespace ConsoleApp3
             {
                 List<int> list = new List<int>() { 1, 2, 3, 4 };
                 // 처음 요소 뱉어주는 First 함수 .
-                Print(list.First());
+                PrintL(list.First());
                 // empty 면 exception 
                 list.Clear();
                 try
                 {
-                    Print(list.First());
+                    PrintL(list.First());
                 }
                 catch (Exception exp)
                 {
-                    Print("Exception ! : " + exp.Message);
+                    PrintL("Exception ! : " + exp.Message);
                 }
             }
             #endregion
@@ -356,18 +373,18 @@ namespace ConsoleApp3
                 // Exception 발생 
                 try
                 {
-                    Print(list.Single());
+                    PrintL(list.Single());
                 }
                 catch (Exception exp)
                 {
-                    Print("Exception ( 요소가 하나보다 많음 ) : " + exp.Message);
+                    PrintL("Exception ( 요소가 하나보다 많음 ) : " + exp.Message);
                 }
 
                 // 하나는 잘 출력됨  
                 list.Clear();
                 list.Add(1);
 
-                Print(list.Single());
+                PrintL(list.Single());
             }
             #endregion
 
@@ -396,89 +413,89 @@ namespace ConsoleApp3
              * */
 
             // 1,234.56 => n 이기떔에 자리수에 맞게 , 를 넣으면서 뒤에 숫자가 없으므로 기본 2 자리수까지 출력. 중요한건 그 오른쪽 숫자로부터 반올림? 될거임 . 
-            Print(tf.ToString("n"));
+            PrintL(tf.ToString("n"));
             // 1,234.5600 => 4 가 붙어서 소수점 4개까지 표시 
-            Print(tf.ToString("n4"));
+            PrintL(tf.ToString("n4"));
             // 1,234
-            Print(tf.ToString("n0"));
+            PrintL(tf.ToString("n0"));
             // 1234
-            Print(tf.ToString("f0"));
+            PrintL(tf.ToString("f0"));
             // 1234.560
-            Print(tf.ToString("f3"));
+            PrintL(tf.ToString("f3"));
             // 1234.6 
-            Print(tf.ToString("0.0"));
+            PrintL(tf.ToString("0.0"));
             // 1234.56
-            Print(tf.ToString("0.00"));
+            PrintL(tf.ToString("0.00"));
             // 01234.560
-            Print(tf.ToString("00000.000"));
+            PrintL(tf.ToString("00000.000"));
             // 1234.6
-            Print(tf.ToString("#.#"));
+            PrintL(tf.ToString("#.#"));
             // 1234.56 
-            Print(tf.ToString("#.###"));
+            PrintL(tf.ToString("#.###"));
             // preview 끝 
 
             Console.WriteLine();
 
             int n = int.MaxValue;
 
-            Print(n.ToString("n"));
-            Print(n.ToString("n0"));
-            Print(n.ToString("n1"));
-            Print(n.ToString("n2"));
-            Print(n.ToString("n3"));
-            Print(n.ToString("f"));
-            Print(n.ToString("f3"));
-            Print(n.ToString("0.000"));
+            PrintL(n.ToString("n"));
+            PrintL(n.ToString("n0"));
+            PrintL(n.ToString("n1"));
+            PrintL(n.ToString("n2"));
+            PrintL(n.ToString("n3"));
+            PrintL(n.ToString("f"));
+            PrintL(n.ToString("f3"));
+            PrintL(n.ToString("0.000"));
 
             Console.WriteLine();
 
             float f = 1234.56f;
 
-            Print(f.ToString("n"));
-            Print(f.ToString("n0"));
-            Print(f.ToString("n1"));
-            Print(f.ToString("n2"));
+            PrintL(f.ToString("n"));
+            PrintL(f.ToString("n0"));
+            PrintL(f.ToString("n1"));
+            PrintL(f.ToString("n2"));
 
-            Print(f.ToString("f0"));
-            Print(f.ToString("f1"));
-            Print(f.ToString("f2"));
-            Print(f.ToString("f0"));
+            PrintL(f.ToString("f0"));
+            PrintL(f.ToString("f1"));
+            PrintL(f.ToString("f2"));
+            PrintL(f.ToString("f0"));
 
-            Print(f.ToString("0.0"));
-            Print(f.ToString("000.0000"));
-            Print(f.ToString("0000000000"));
-            Print(f.ToString("0,0"));
+            PrintL(f.ToString("0.0"));
+            PrintL(f.ToString("000.0000"));
+            PrintL(f.ToString("0000000000"));
+            PrintL(f.ToString("0,0"));
 
-            Print(f.ToString("##.####"));
-            Print(f.ToString("#.#"));
-            Print(f.ToString("#.0"));
-            Print(f.ToString("#.##"));
-            Print(f.ToString("#.00"));
-            Print(f.ToString("#.###"));
-            Print(f.ToString("#.000"));
-            Print(f.ToString("#.#0#"));
-            Print(f.ToString("#.0#0"));
-            Print(f.ToString("#.#0#0#"));
-            Print(f.ToString("#.0#0#0"));
+            PrintL(f.ToString("##.####"));
+            PrintL(f.ToString("#.#"));
+            PrintL(f.ToString("#.0"));
+            PrintL(f.ToString("#.##"));
+            PrintL(f.ToString("#.00"));
+            PrintL(f.ToString("#.###"));
+            PrintL(f.ToString("#.000"));
+            PrintL(f.ToString("#.#0#"));
+            PrintL(f.ToString("#.0#0"));
+            PrintL(f.ToString("#.#0#0#"));
+            PrintL(f.ToString("#.0#0#0"));
 
             Console.WriteLine();
 
             float f02 = 0.12f;
 
-            Print(f02.ToString("#.0"));
-            Print(f02.ToString("#.##"));
-            Print(f02.ToString("0.#"));
-            Print(f02.ToString("#0.#0"));
-            Print(f02.ToString("0#0.#0"));
-            Print(f02.ToString("00#0.#####"));
+            PrintL(f02.ToString("#.0"));
+            PrintL(f02.ToString("#.##"));
+            PrintL(f02.ToString("0.#"));
+            PrintL(f02.ToString("#0.#0"));
+            PrintL(f02.ToString("0#0.#0"));
+            PrintL(f02.ToString("00#0.#####"));
 
             Console.WriteLine();
 
             int n02 = 1234;
 
-            Print(n02.ToString("##.##"));
-            Print(n02.ToString("00.00"));
-            Print(n02.ToString("000000.000"));
+            PrintL(n02.ToString("##.##"));
+            PrintL(n02.ToString("00.00"));
+            PrintL(n02.ToString("000000.000"));
         }
 
         static void FileInfoTask()
@@ -547,7 +564,115 @@ namespace ConsoleApp3
         // Fix
         static void DisplayClassTest()
         {
-            
+
+        }
+
+        // 아스키코드 위주 
+        // 명심할거는 컴퓨터의 모든것은 숫자다 . 
+        // 참고로 char 은 c# 서 2 바이트임 . UTF-16
+
+        // 표 https://valueelectronic.tistory.com/83 
+        static void CharacterTest()
+        {
+            // 영어 대문자들 출력 
+            {
+                Print("대문자 출력");
+
+                // 65~90 , A~Z 에 해당하는 아스키코드 
+                // ABCD...
+                for (int i = 65; i < 91; i++)
+                    PrintW((char)i, 1);
+
+                // Linq 버전 
+                /* foreach (char item in Enumerable.Range(65, 91 - 65))
+                                PrintW(item, 1); */
+            }
+
+            PadLines(2);
+
+            // 영어 소문자들 출력
+            {
+                Print("소문자 출력");
+
+                // 97~122 , a~z 에 해당하는 아스키코드
+                // abcd...
+                for (int i = 97; i < 123; i++)
+                    PrintW((char)i, 1);
+            }
+
+            PadLines(2);
+
+            // 영어 대문자 -> 소문자 변환 
+            {
+                Print("대문자 -> 소문자 출력");
+
+                for (int i = 65; i < 91; i++)
+                {
+                    char c = (char)i;
+                    PrintW(c + " -> " + (char)(c + 32), 1);
+                    PrintW(" , ");
+                }
+            }
+
+            PadLines(2);
+
+            // 영어 소문자 -> 대문자 변환 
+            {
+                Print("소문자 -> 대문자 출력");
+
+                for (int i = 97; i < 123; i++)
+                {
+                    char c = (char)i;
+                    PrintW(c + " -> " + (char)(c - 32), 1);
+                    PrintW(" , ");
+                }
+            }
+
+            PadLines(2);
+
+            {
+                Print("숫자 char -> int 숫자로 출력");
+
+                // 숫자 0~9 도 아스키코드에 있음 
+
+                // char 숫자를 int 숫자로 변환 
+                string str = "321456";
+                List<char> chars = new List<char>();
+
+                // char 형인 숫자 하나씩 ++ 
+                foreach (var item in str)
+                {
+                    chars.Add(item);
+                }
+
+                foreach (var item in chars)
+                {
+                    // 숫자의 아스키코드 값 - '0' 의 아스키코드 값 
+                    // 즉 '0' 의 아스키 코드값은 48 
+                    // '1' 의 아스키코드 값은 49 
+                    // 즉 '1' - '0' 은 1 임 . 즉 숫자로 변환되는 아주 간단한 원리. 
+                    int number = (item - '0');
+
+                    PrintW(number);
+                }
+            }
+
+            PadLines(2);
+
+            {
+                // c# 에서 char 는 2 바이트임 . 즉 한글도 포함함 
+
+                // '한' 이라는 글자의 유니코드 값은 D55C
+                char A = '한'; 
+
+                // 밑에 한문들도 같은 맥락으로 값들이 있음 
+                char B = '寒';
+                char C = '汏';
+
+                Print(string.Format("한국어 : {0} 유니코드 ({1})", A, (int)A));
+                Print(string.Format("한문 : {0} 유니코드 ({1})", B, (int)B));
+                Print(string.Format("한문 : {0} 유니코드 ({1})", C, (int)C));
+            }
         }
 
         // 정규식 테스트 
@@ -570,11 +695,11 @@ namespace ConsoleApp3
                     for (int i = 0; i < 10; i++)
                     {
                         var m = mat.Value;
-                        Print(m + " , " + mat.Index);
+                        PrintL(m + " , " + mat.Index);
                         mat = mat.NextMatch();
                     }
                 }
-                else Print("fail");
+                else PrintL("fail");
             }
         }
 
@@ -605,8 +730,8 @@ namespace ConsoleApp3
 
             byte[] sourceBytes = ProjectUtility.Serialize_BinaryFormatter(testClass);
 
-            Print("원래 데이터 - " + testClass.ToString());
-            Print("원래 데이터 바이트 크기 : " + sourceBytes.Length, 1);
+            PrintL("원래 데이터 - " + testClass.ToString());
+            PrintL("원래 데이터 바이트 크기 : " + sourceBytes.Length, 1);
 
             {
                 ///////////// RijndaelManaged 암호화 ///////////
@@ -625,14 +750,14 @@ namespace ConsoleApp3
                     ICryptoTransform cTransform = rDel.CreateEncryptor();
                     byte[] encryptedBytes = cTransform.TransformFinalBlock(sourceBytes, 0, sourceBytes.Length);
 
-                    Print("RijndaelManagedKey 부호화(암호화) 바이트 크기 : " + encryptedBytes.Length);
+                    PrintL("RijndaelManagedKey 부호화(암호화) 바이트 크기 : " + encryptedBytes.Length);
 
                     ///// 복호화 관련 세팅 
                     cTransform = rDel.CreateDecryptor();
                     byte[] decryptedByte = cTransform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
                     var decryptedResult = ProjectUtility.Deserialize_BinaryFormatter(decryptedByte) as EncryptionTestClass;
 
-                    Print("RijndaelManagedKey 복호화 결과 : " + decryptedResult.ToString());
+                    PrintL("RijndaelManagedKey 복호화 결과 : " + decryptedResult.ToString());
                 }
             }
 
@@ -641,7 +766,7 @@ namespace ConsoleApp3
                 using (MD5 md5Hash = MD5.Create())
                 {
                     // https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.md5?view=netframework-4.8 참고 
-                    Print("Fix!!");
+                    PrintL("Fix!!");
                 }
             }
         }
@@ -673,7 +798,7 @@ namespace ConsoleApp3
 
             watch.Stop();
 
-            Print("곱셈 걸린 시간(밀리세컨즈) : " + watch.ElapsedMilliseconds);
+            PrintL("곱셈 걸린 시간(밀리세컨즈) : " + watch.ElapsedMilliseconds);
 
             watch.Reset();
             watch.Start();
@@ -687,7 +812,7 @@ namespace ConsoleApp3
 
             watch.Stop();
 
-            Print("나눗셈 걸린 시간(밀리세컨즈) : " + watch.ElapsedMilliseconds);
+            PrintL("나눗셈 걸린 시간(밀리세컨즈) : " + watch.ElapsedMilliseconds);
         }
 
         // 비트연산 테스트 
@@ -698,19 +823,19 @@ namespace ConsoleApp3
 
             int move = 1 << 1;
 
-            Print(n.ToString().ToBinary());
-            Print(t.ToString().ToBinary());
-            Print(n & t);
+            PrintL(n.ToString().ToBinary());
+            PrintL(t.ToString().ToBinary());
+            PrintL(n & t);
 
             int n2 = 0x100;
             int t2 = 0x101;
 
-            Print(n2 & t2);
+            PrintL(n2 & t2);
 
             int n3 = 0xf;
             int t3 = 8;
 
-            Print(n3 & t3);
+            PrintL(n3 & t3);
         }
 
         // 리스트 sort 테스트 
@@ -720,48 +845,48 @@ namespace ConsoleApp3
             List<SortTestClass> scores = new List<SortTestClass>();
             Random random = new Random();
 
-            Print("Original data");
+            PrintL("Original data");
             PadLines();
 
             for (int i = 0; i < 10; i++)
             {
                 scores.Add(new SortTestClass() { score = random.Next() % 1000 });
-                Print(scores[i].score);
+                PrintL(scores[i].score);
             }
 
             PadLines();
 
             // IComparable 인터페이스 CompareTo 함수를 이용하여 정렬. 
-            Print("Sort!");
+            PrintL("Sort!");
             scores.Sort();
-            scores.ForEach(t => Print(t.score));
+            scores.ForEach(t => PrintL(t.score));
             scores.Shuffle();
 
             PadLines();
-            Print("Shuffle!");
+            PrintL("Shuffle!");
             PadLines();
 
             // static 함수로 정렬 . 
-            Print("Sort!");
+            PrintL("Sort!");
             scores.Sort(SortTestClass.CompareByComparison_Static);
-            scores.ForEach(t => Print(t.score));
+            scores.ForEach(t => PrintL(t.score));
             scores.Shuffle();
 
             PadLines();
-            Print("Shuffle!");
+            PrintL("Shuffle!");
             PadLines();
 
             // non static 일반 함수로 정렬 . 
-            Print("Sort!");
+            PrintL("Sort!");
             scores.Sort(forSortMethod.CompareByComparison_NonStatic);
-            scores.ForEach(t => Print(t.score));
+            scores.ForEach(t => PrintL(t.score));
             scores.Shuffle();
 
             PadLines();
-            Print("Shuffle!");
+            PrintL("Shuffle!");
             PadLines();
 
-            Print("Sort!");
+            PrintL("Sort!");
             // Comparison 델리게이트 형태에만 맞춰주면 되니까 
             // 익명함수도 가능함. 
             scores.Sort((t1, t2) =>
@@ -779,29 +904,29 @@ namespace ConsoleApp3
                     return 0;
                 }
             });
-            scores.ForEach(t => Print(t.score));
+            scores.ForEach(t => PrintL(t.score));
             scores.Shuffle();
 
             PadLines();
-            Print("Shuffle!");
+            PrintL("Shuffle!");
             PadLines();
 
-            Print("Sort!");
+            PrintL("Sort!");
             scores.Sort(new SortTestClass_Comparer());
-            scores.ForEach(t => Print(t.score));
+            scores.ForEach(t => PrintL(t.score));
             scores.Shuffle();
 
             PadLines();
-            Print("Shuffle!");
+            PrintL("Shuffle!");
             PadLines();
 
-            Print("ONLY Half Sort!");
+            PrintL("ONLY Half Sort!");
             scores.Sort(0, (int)(scores.Count * 0.5f), new SortTestClass_Comparer());
-            scores.ForEach(t => Print(t.score));
+            scores.ForEach(t => PrintL(t.score));
             scores.Shuffle();
 
             PadLines();
-            Print("Shuffle!");
+            PrintL("Shuffle!");
             PadLines();
         }
 
