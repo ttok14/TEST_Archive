@@ -12,7 +12,7 @@ using ConsoleApp3.ClassUnitTest;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography; // 암호화 
 using System.Diagnostics;
-using ConsoleApp3.ClassUnitTest.ConvarianceTest;
+//using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
 namespace ConsoleApp3
 {
@@ -935,10 +935,10 @@ namespace ConsoleApp3
         // 공변성, 반공변성 테스트 
         static void ConvarianceTest()
         {
-            ConvarianceTestClass01 test = new ConvarianceTestClass01();
-            test.TestNormalCasting();
-            test.TestConvariance();
-            test.TestDelegate();
+         //   ConvarianceTestClass01 test = new ConvarianceTestClass01();
+         //   test.TestNormalCasting();
+         //   test.TestConvariance();
+         //   test.TestDelegate();
         }
 
         #endregion
