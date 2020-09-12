@@ -76,7 +76,8 @@ namespace ConsoleApp3
             // ReflectionTest();
             // RegexTest();
             //CharacterTest();
-            ConvarianceTest();
+            // ConvarianceTest();
+            DateTime_TimeSpanTest();
         }
 
         #region 제이스 테스트 코드
@@ -255,9 +256,79 @@ namespace ConsoleApp3
             } */
         }
 
-        static void TestDateTime()
+        /*
+         * 크게 
+         * DateTime, TimeSpan 구조체를 사용가능함. 
+         * DateTime 은 '시간(Time)' , TimeSpan 은 '기간(Duration)' 을 나타내기 위함인데 , 
+         * 
+         * 둘이 헷갈릴수 있는데 , 이런거임 .
+         * DateTime 은 말 그대로 '시간' 을 의미함 . 
+         * 예로 , 오늘 14:20 을 표현하고싶다 , 그러면 DateTime 으로 표현함 . 
+         *
+         * 근데 내가 여기서 만약 '지금 시간에서 30분을 뺀 시간은 어떻게 구할까?' 라 한다면 , 
+         * 
+         * 지금 '시간' 인 DateTime 에서 30분이라는 TimeSpan('기간') 을 뺀 DateTime('시간') 을 구하면 됨. 
+         * */
+        static void DateTime_TimeSpanTest()
         {
             PrintL(Convert.ToDateTime("05 /01/1996 17:23:29"));
+
+            //     var timeSpan = new TimeSpan(24, 0, 0);
+            //     Console.WriteLine(TimeSpan.TicksPerDay / TimeSpan.TicksPerSecond);
+            //     return;
+
+            Print("--------특정 시간 표현-------");
+            Print("오늘 날짜 : " + DateTime.Today);
+            Print("내일 : " + (DateTime.Today + TimeSpan.FromDays(1)));
+            Print("지금 시각 : " + DateTime.Now);
+            Print("지금으로 부터  1시간 전 " + DateTime.Now.Subtract(TimeSpan.FromHours(1)));
+            Print("지금으로 부터  1시간 25분전 " + DateTime.Now.Subtract(TimeSpan.FromMinutes(85)));
+            Print("-------------------------------");
+            PadLines(2);
+
+            // 특정 시간이 오늘의 새벽 5시를 지났는지 안지났는지 체크
+            int hoursBeforeNow = 3;
+            DateTime todayFiveAm = DateTime.Today.AddHours(5);
+
+            DateTime specificTime = DateTime.Now.Subtract(TimeSpan.FromHours(hoursBeforeNow));
+            Print("지금 시각은 : " + DateTime.Now + " , 테스트 기준 시간은 " + hoursBeforeNow + " 시간 전인 " + specificTime);
+            Print("기준 시간 : " + specificTime + " 은 오늘의 새벽 5시 " + todayFiveAm + " 를 지났다 ? 안지났다 ? 결과는 ?");
+
+            // 시간 체크 < > 연산 가능 
+            Print(specificTime > todayFiveAm ? "지났습니다" : "안 지났습니다");
+
+            PadLines();
+
+            // Tick 에 관해서 
+            // Tick 은 여러 분야에 따라서 의미가 달라지는데, 예로 Cpu 는 전기가 한 번 들어오는거를 틱이라고도 하고 
+            // 여기서는 시간이기 때문에 시간의 최소단위 
+            // 즉 , 1초보다도 훨씬 낮음 
+            // 물론 소수점으로 1초 아래를 표현할수 있지만 부동소수점이던 고정소수점이던 
+            // 부정확함이 있기에 , 오차없는 정수로 표현하는듯함 . 
+
+            // 초당 틱 출력 
+            // 틱은 특정 '시간' 이 아니라 , '기간' 을 나타내므로 TimeSpan 에 있음 . 
+
+            // 또 이점은 Tick 을 사용하면 단위가 다른 시간들 즉 1일, 1시간, 1분 ,1초 등을
+            // 하나의 통일된 Tick 이란 단위로 표현할수 있어서 편함 . 즉 
+            // 1일은 24시간임, 즉 1일을 표현하려면 초단위로는 86400초 , 분단위로는 모르겠고 ㅋㅋ 
+            // 시간단위로는 24시간이지 , 즉 서로 단위가 다르면 변환해줘야하는데 
+            // 틱은 고정임 . 
+            // 즉 1초의 틱을 알면 모든 변환이 틱으로만 가능함 .
+            // 1시간 틱 / 1초 틱 = 1시간은 몇초인지 , 가 계산이 되는거 
+            // 시간으로 하면 나라가 달라지거나 단위가 달라지거나 환경이 달라지면 오류가 날수있음. 하지만 고정된 
+            // 틱이라는 단위로 계산하면 오류를 범할수 없음 . 
+
+            // 1초 Tick 출력
+            Console.WriteLine("1초 Ticks : " + TimeSpan.TicksPerSecond);
+            // 1시간 Tick 출력
+            Console.WriteLine("1시간 Ticks : " + TimeSpan.TicksPerHour);
+            // 1시간 30분 Tick 출력 
+            Console.WriteLine("1시간 30분 Ticks : " + new TimeSpan(hours: 1, minutes: 30, seconds: 0).Ticks);
+            // 하루는 몇초인가 ?  
+            Console.WriteLine("1일은 몇초인가 ? : " + TimeSpan.TicksPerDay / TimeSpan.TicksPerSecond);
+            // 1시간은 몇초인가 ? 
+            Console.WriteLine("1시간은 몇초인가 ? " + TimeSpan.TicksPerHour / TimeSpan.TicksPerSecond);
         }
 
         /*
