@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassUnitTest\ExcelTest\ExcelTestClass.cs" />
+    <Compile Include="ClassUnitTest\LambdaVariableCaptureTest\LambdaVariableCaptureClass.cs" />
     <Compile Include="ClassUnitTest\Reflection\ReflectionTest.cs" />
     <Compile Include="ClassUnitTest\AttributeTest\AttributeTestClass.cs" />
     <Compile Include="ClassUnitTest\Sorting\SortTestClass.cs" />

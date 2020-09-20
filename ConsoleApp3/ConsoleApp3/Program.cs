@@ -12,6 +12,7 @@ using ConsoleApp3.ClassUnitTest;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography; // 암호화 
 using System.Diagnostics;
+using ConsoleApp3.ClassUnitTest.LambdaVariableCaptureTest;
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
 namespace ConsoleApp3
@@ -77,7 +78,8 @@ namespace ConsoleApp3
             // RegexTest();
             //CharacterTest();
             // ConvarianceTest();
-            DateTime_TimeSpanTest();
+            // DateTime_TimeSpanTest();
+            LambdaVariableCaptureTest();
         }
 
         #region 제이스 테스트 코드
@@ -329,6 +331,33 @@ namespace ConsoleApp3
             Console.WriteLine("1일은 몇초인가 ? : " + TimeSpan.TicksPerDay / TimeSpan.TicksPerSecond);
             // 1시간은 몇초인가 ? 
             Console.WriteLine("1시간은 몇초인가 ? " + TimeSpan.TicksPerHour / TimeSpan.TicksPerSecond);
+        }
+
+        /*
+         * DisplayClass (익명 클래스를 이렇게 부름) 의 Variable Capture (Closure Capture 라고도 함)
+         * 를 테스트함 . 
+         * LambdaVariableCaptureClass 클래스 내부를 보면은 자세한 설명이 있음 . 
+         * 간단하게 , 익명함수로 각각 다른 값을 넘겼는데,  최종적으로 똑같은 하나의 값만 기억되어
+         * 파라미터로 넘어오는 현상 . 왜 그런지 . 테스트 . 및 이해 . 
+         * */
+        static int captureTestData = 0;
+        static void LambdaVariableCaptureTest()
+        {
+            /// Test 01 : 조금 뻔함 . 
+            Action action = () =>
+            {
+                Print(captureTestData);
+            };
+
+            action();
+            captureTestData++;
+            action();
+            action();
+
+            LambdaVariableCaptureClass testClass = new LambdaVariableCaptureClass();
+
+            testClass.Call(4);
+            testClass.Call(2);
         }
 
         /*
@@ -977,6 +1006,7 @@ namespace ConsoleApp3
                     return 0;
                 }
             });
+
             scores.ForEach(t => PrintL(t.score));
             scores.Shuffle();
 
@@ -1011,10 +1041,6 @@ namespace ConsoleApp3
          //   test.TestConvariance();
          //   test.TestDelegate();
         }
-
-        #endregion
-
-        #region 아이작 테스트 코드 
 
         #endregion
     }
