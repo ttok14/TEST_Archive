@@ -71,12 +71,15 @@ namespace ConsoleApp3
 
             // 이 밑에서 테스트 진행 
             //BasicMathOperationSpeedTest();
-            //   EncryptionDecryptionTest();
+            //IonicSaveZip();
+            //EncryptionDecryptionTest();
             // LinqUsage();
             // ExcelTest();
             // ReflectionTest();
             // RegexTest();
+            //BitOperationTest();
             //CharacterTest();
+            //SortTest();
             // ConvarianceTest();
             // DateTime_TimeSpanTest();
             LambdaVariableCaptureTest();
