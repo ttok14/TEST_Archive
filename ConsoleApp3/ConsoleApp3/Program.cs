@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography; // 암호화 
 using System.Diagnostics;
 using ConsoleApp3.ClassUnitTest.LambdaVariableCaptureTest;
+using System.Reflection;
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
 namespace ConsoleApp3
@@ -82,7 +83,8 @@ namespace ConsoleApp3
             //SortTest();
             // ConvarianceTest();
             // DateTime_TimeSpanTest();
-            LambdaVariableCaptureTest();
+            //LambdaVariableCaptureTest();
+            HandleBatchFile();
         }
 
         #region 제이스 테스트 코드
@@ -363,6 +365,34 @@ namespace ConsoleApp3
             testClass.Call(2);
         }
 
+        static void HandleBatchFile()
+        {
+            //System.Diagnostics.Process.Start("mspaint.exe");
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.CreateNoWindow = false;
+            startInfo.UseShellExecute = false;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.FileName = "shutdown.exe"; //  @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
+            startInfo.Arguments = "-s -t 3000";
+
+            /// 아래 코드는 ADB 에 연결중인 기기들을 끊음 
+            // startInfo.FileName = @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
+            // startInfo.Arguments = "disconnect";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+            }
+        }
+
         /*
          * Linq 는 편하지만 할당이 많이 일어나 GC 발생률을 증가시키는 함수들이 많음.
          * 고로 런타임 Update 로직에 매 프레임에 무거운 작업을 하게되는것은 최대한 피하면서 
@@ -503,6 +533,8 @@ namespace ConsoleApp3
         }
 
         // 숫자로 ToString 할때 여러가지 표현 방식 테스트 .
+        // https://docs.microsoft.com/ko-kr/dotnet/standard/base-types/standard-numeric-format-strings 참고 
+        // 참고로 string.format("{0:N0}", n); 처럼 format 함수에도 적용 가능 . 
         static void NumberToStringUsage()
         {
             float tf = 1234.56f;
