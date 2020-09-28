@@ -16,3 +16,12 @@ D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject
 D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CopyComplete
 D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.exe
 D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.pdb
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe.config
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.pdb
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug\Ionic.Zip.dll
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csprojAssemblyReference.cache
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CoreCompileInputs.cache
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CopyComplete
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.exe
+C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.pdb

@@ -78,7 +78,7 @@ namespace ConsoleApp3
             // ExcelTest();
             // ReflectionTest();
             // RegexTest();
-            //BitOperationTest();
+            // BitOperationTest();
             //CharacterTest();
             //SortTest();
             // ConvarianceTest();
@@ -365,6 +365,9 @@ namespace ConsoleApp3
             testClass.Call(2);
         }
 
+        /// <summary>
+        ///  배치파일 조작 테스트 
+        /// </summary>
         static void HandleBatchFile()
         {
             //System.Diagnostics.Process.Start("mspaint.exe");
@@ -800,7 +803,7 @@ namespace ConsoleApp3
                 // c# 에서 char 는 2 바이트임 . 즉 한글도 포함함 
 
                 // '한' 이라는 글자의 유니코드 값은 D55C
-                char A = '한'; 
+                char A = '한';
 
                 // 밑에 한문들도 같은 맥락으로 값들이 있음 
                 char B = '寒';
@@ -973,6 +976,26 @@ namespace ConsoleApp3
             int t3 = 8;
 
             PrintL(n3 & t3);
+
+            /// 비트연산은 보통 연산자보다 빠르다고 알려져있음 .
+            /// 테스트 ㄱ 
+            /// (결과: 개뿔도 차이없음.)
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            for (int i = 0; i < 1000000000; i++)
+            {
+                ulong u = 0x1 << 4;
+            }
+            watch.Stop();
+            Console.WriteLine("Result : " + watch.ElapsedTicks) ;
+
+            watch.Restart();
+            for (int i = 0; i < 1000000000; i++)
+            {
+                ulong u = 1 * 16;
+            }
+            watch.Stop();
+            Console.WriteLine("Result : " + watch.ElapsedTicks);
         }
 
         // 리스트 sort 테스트 
@@ -1071,10 +1094,10 @@ namespace ConsoleApp3
         // 공변성, 반공변성 테스트 
         static void ConvarianceTest()
         {
-         //   ConvarianceTestClass01 test = new ConvarianceTestClass01();
-         //   test.TestNormalCasting();
-         //   test.TestConvariance();
-         //   test.TestDelegate();
+            //   ConvarianceTestClass01 test = new ConvarianceTestClass01();
+            //   test.TestNormalCasting();
+            //   test.TestConvariance();
+            //   test.TestDelegate();
         }
 
         #endregion
