@@ -77,14 +77,14 @@ namespace ConsoleApp3
             // LinqUsage();
             // ExcelTest();
             // ReflectionTest();
-            // RegexTest();
+            RegexTest();
             // BitOperationTest();
             //CharacterTest();
             //SortTest();
             // ConvarianceTest();
             // DateTime_TimeSpanTest();
             //LambdaVariableCaptureTest();
-            HandleBatchFile();
+            //HandleBatchFile();
         }
 
         #region 제이스 테스트 코드
@@ -388,7 +388,20 @@ namespace ConsoleApp3
                 // Call WaitForExit and then the using statement will close.
                 using (Process exeProcess = Process.Start(startInfo))
                 {
+                    /// 해당 실행파일이 끝날때까지 현재 이 프로세스는 Block 상태 . 즉 대기하게됨.
+                    /// 즉 동기함수 .
                     exeProcess.WaitForExit();
+
+                    var code = exeProcess.ExitCode;
+
+                    if (code == 0)
+                    {
+                        Console.WriteLine("Successfully exit!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error Occur ! . Code : " + code);
+                    }
                 }
             }
             catch
@@ -817,30 +830,61 @@ namespace ConsoleApp3
 
         // 정규식 테스트 
         // Fix 
+        /// <summary>
+        /// TODO : 
+        ///     - 패턴별로 example 잘 정리해서 보여줘야함
+        ///         - 중괄호 {} 로 잘 그룹화해서 패턴별로 exmaple 보여줄까 ? 
+        ///     - 
+        /// </summary>
+        #region 패턴 (Pattern) 설명 
+        /// [\d] : 숫자만을 개별로 찾음 . 1234ABCD 면 1,2,3,4 즉 개별로. ( d 를 대문자로해서 [\D] 로 하면 숫자가 '아닌' 것만 찾음. 이 룰은 일괄 적용 )
+        /// [\d]+ : + 가 붙으면, '전부' 란 의미 . 숫자를 찾는데 연속으로 붙어있는 숫자라면 그 숫자를 하나로 해서 찾음 . 즉 그룹으로 . 
+        ///     예로 1234ABC987 면 , 1234 , 987 가 매칭 대상이 됨.
+        #endregion
         static void RegexTest()
         {
-            string[] address =
-            {
-                "riot@gmail.com"
-                ,"blizzard@gmail.com"
-                ,"corgi@gmail.com"
-            };
+            string input = "Start,975-5121-5642,holala@gmail.com";
+            string pattern = @"[\d]+";// "[0-9]+";
+
+            Print($"Input : {input}, Pattern : {pattern}", 1);
 
             {
-                var r = Regex.Match("ABc854dEF24gh", @"\d");
+                Print("----- Regex.Match 테스트 -----");
+
+                var r = Regex.Match(input, pattern);
 
                 if (r.Success)
                 {
-                    Match mat = r;
-                    for (int i = 0; i < 10; i++)
-                    {
-                        var m = mat.Value;
-                        PrintL(m + " , " + mat.Index);
-                        mat = mat.NextMatch();
-                    }
+                    Print("(Match Success)");
+
+                    Print("First Match : " + r.Value);
+                    Print("Length : " + r.Length);
+                    Print("Index From Original Input : " + r.Index);
                 }
-                else PrintL("fail");
+                else
+                {
+                    Print("(Match Fail)");
+                }
+
+                Print("-----------------------------------");
             }
+
+            PadLines(2);
+
+            {
+                Print($"----- Regex.Matches 테스트 -----");
+
+                /// Match 를 순회하기 위해 Regex 의 Matches() 를 이용 
+                var r = Regex.Matches(input, pattern);
+
+                foreach (var item in r)
+                {
+                    Console.WriteLine("검출된 문자열 : " + item);
+                }
+
+                Print("-----------------------------------");
+            }
+
         }
 
         // Fix
@@ -987,7 +1031,7 @@ namespace ConsoleApp3
                 ulong u = 0x1 << 4;
             }
             watch.Stop();
-            Console.WriteLine("Result : " + watch.ElapsedTicks) ;
+            Console.WriteLine("Result : " + watch.ElapsedTicks);
 
             watch.Restart();
             for (int i = 0; i < 1000000000; i++)
