@@ -14,6 +14,7 @@ using System.Security.Cryptography; // 암호화
 using System.Diagnostics;
 using ConsoleApp3.ClassUnitTest.LambdaVariableCaptureTest;
 using System.Reflection;
+using System.Threading;
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
 namespace ConsoleApp3
@@ -77,7 +78,7 @@ namespace ConsoleApp3
             // LinqUsage();
             // ExcelTest();
             // ReflectionTest();
-            RegexTest();
+            // RegexTest();
             // BitOperationTest();
             //CharacterTest();
             //SortTest();
@@ -85,6 +86,7 @@ namespace ConsoleApp3
             // DateTime_TimeSpanTest();
             //LambdaVariableCaptureTest();
             //HandleBatchFile();
+            AsyncTest();
         }
 
         #region 제이스 테스트 코드
@@ -408,6 +410,152 @@ namespace ConsoleApp3
             {
             }
         }
+
+        #region Async & Await
+        public enum AsyncTestGameState
+        {
+            None = 0,
+            DownloadingAsset,
+            CharacterSelect,
+            InGame,
+            CloseGame
+        }
+
+        private static AsyncTestGameState asyncTest_GameState;
+
+        /// <summary>
+        /// C# 의 Async/Await 키워드 테스트 
+        /// </summary>
+        static void AsyncTest()
+        {
+            AsyncTest_SetGameState(AsyncTestGameState.DownloadingAsset);
+
+            while (asyncTest_GameState != AsyncTestGameState.CloseGame)
+            {
+                /// 메인 게임 로직 . 현재 비동기로 돌고있는 
+                /// <see cref="AsyncTest_SetGameState"/> 와는 별개로 돌음. 
+                
+            }
+
+            PadLines(1);
+            Print("- 게임 종료 -");
+        }
+
+        private static void AsyncTest_SetGameState(AsyncTestGameState state)
+        {
+            Print($"GameState : {state}");
+            asyncTest_GameState = state;
+
+            switch (state)
+            {
+                case AsyncTestGameState.DownloadingAsset:
+                    {
+                        TestAsync_StartDownload((timeTaken) =>
+                        {
+                            Print($"총 에셋 다운로드 시간 : {timeTaken}");
+                            AsyncTest_SetGameState(AsyncTestGameState.CharacterSelect);
+                        });
+                    }
+                    break;
+                case AsyncTestGameState.CharacterSelect:
+                    {
+                        AsyncTest_SetGameState(AsyncTestGameState.InGame);
+                    }
+                    break;
+                case AsyncTestGameState.InGame:
+                    {
+                        AsyncTest_SetGameState(AsyncTestGameState.CloseGame);
+                    }
+                    break;
+                case AsyncTestGameState.CloseGame:
+                    {
+
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Async 다운로드 시뮬레이션 
+        /// 
+        /// ** Task 는 UI Thread 가 아닌 Worker Thread (BackGround Thread) 
+        /// 에서 실행이 됨. ** 
+        /// </summary>
+        static async void TestAsync_StartDownload(Action<double> onDownloadDone)
+        {
+            double totalTimeTaken = 0d;
+
+            #region ---------------------------- Case 01 -------------------------------------------------
+            var task01 = Task.Run(() =>
+            {
+                /// 다운로드 총 걸린 시간 체크용 
+                double timeTaken = 0;
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Print($"File01 다운로드 진행률 : {i} / 10");
+
+                    /// 
+                    Thread.Sleep(TimeSpan.FromSeconds(0.3));
+                    timeTaken += 0.3;
+                }
+
+                return timeTaken;
+            });
+
+            var time = await task01;
+
+            Print($"File 01 다운로드 끝 ! , 걸린 시간 : {time}");
+
+            totalTimeTaken += time;
+            #endregion
+
+            #region ------------------------ Case 02 -----------------------------------------
+
+            double timeTaken_down02 = 0;
+
+            var task02 = new Task(() =>
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Print($"File 02 : 다운로드 진행률 {i} / 10");
+                    Thread.Sleep(TimeSpan.FromSeconds(0.3));
+                    timeTaken_down02 += 0.3;
+                }
+            });
+
+            task02.RunSynchronously();
+
+            Print($"File 02 다운로드 끝 ! , 걸린 시간 : {timeTaken_down02}");
+            totalTimeTaken += timeTaken_down02;
+            #endregion
+
+            #region --------------------- Case 03 --------------------------------------------
+
+            double timeTaken_file03 = 0d;
+
+            Task.Run(() =>
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    Print($"File 03 : 다운로드 진행률 {i} / 5");
+                    Thread.Sleep(TimeSpan.FromSeconds(0.2));
+                    timeTaken_file03 += 0.2;
+                }
+
+                Print($"File 03 다운로드 끝 ! , 걸린 시간 : {timeTaken_file03}");
+                totalTimeTaken += timeTaken_file03;
+            })
+            /// 위 Task 가 끝나게 되면 밑에 ContinueWith 에 람다문이 실행된다. 
+            .ContinueWith((task_) =>
+            {
+                onDownloadDone(totalTimeTaken);
+            });
+
+            #endregion
+        }
+
+        #endregion
 
         /*
          * Linq 는 편하지만 할당이 많이 일어나 GC 발생률을 증가시키는 함수들이 많음.
