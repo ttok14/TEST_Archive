@@ -434,7 +434,7 @@ namespace ConsoleApp3
             {
                 /// 메인 게임 로직 . 현재 비동기로 돌고있는 
                 /// <see cref="AsyncTest_SetGameState"/> 와는 별개로 돌음. 
-                
+
             }
 
             PadLines(1);
@@ -534,7 +534,7 @@ namespace ConsoleApp3
 
             double timeTaken_file03 = 0d;
 
-            Task.Run(() =>
+            var taskIdCheck01 = Task.Run(() =>
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -549,9 +549,14 @@ namespace ConsoleApp3
             /// 위 Task 가 끝나게 되면 밑에 ContinueWith 에 람다문이 실행된다. 
             .ContinueWith((task_) =>
             {
+                /// 파라미터 task_ 와 taskIdCheck01 의 id 가 같음 . 
+                /// 왜냐면은 현재 이 task 는 taskIdCheck01 의 Task 의 비동기 작업이
+                /// 끝난 후에 실행되는 task 이기 때문. 
+                Print($"이전 Task 의 ID : {task_.Id}");
                 onDownloadDone(totalTimeTaken);
             });
 
+            Print($"Task 의 ID : {taskIdCheck01.Id}");
             #endregion
         }
 
