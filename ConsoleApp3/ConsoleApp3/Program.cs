@@ -86,7 +86,25 @@ namespace ConsoleApp3
             // DateTime_TimeSpanTest();
             //LambdaVariableCaptureTest();
             //HandleBatchFile();
-            AsyncTest();
+
+            // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
+            AsyncTest(AsyncTestCase.AsyncTest_Loading);
+        }
+
+        public static async Task DisplayCurrentInfoAsync()
+        {
+            await WaitAndApologizeAsync();
+
+            Console.WriteLine($"Today is {DateTime.Now:D}");
+            Console.WriteLine($"The current time is {DateTime.Now.TimeOfDay:t}");
+            Console.WriteLine("The current temperature is 76 degrees.");
+        }
+
+        static async Task WaitAndApologizeAsync()
+        {
+            await Task.Delay(2000);
+
+            Console.WriteLine("Sorry for the delay...\n");
         }
 
         #region 제이스 테스트 코드
@@ -411,7 +429,14 @@ namespace ConsoleApp3
             }
         }
 
-        #region Async & Await
+        #region Async & Await 테스트 
+        public enum AsyncTestCase
+        {
+            None = 0,
+            AsyncTest_GameLogic,
+            AsyncTest_Loading
+        }
+
         public enum AsyncTestGameState
         {
             None = 0,
@@ -421,12 +446,35 @@ namespace ConsoleApp3
             CloseGame
         }
 
+        #region Async Test 01 - 게임 로직편
+
         private static AsyncTestGameState asyncTest_GameState;
+
+        static void AsyncTest(AsyncTestCase testCase)
+        {
+            if(testCase == AsyncTestCase.AsyncTest_GameLogic)
+            {
+                AsyncTest_GameLogic();
+            }
+            else if(testCase == AsyncTestCase.AsyncTest_Loading)
+            {
+                AsyncTest_LoadAsset();
+
+                /// 메인 쓰레드 강제로 블로킹 걸자~
+                /// (UI Thread 라고도 불리지?)
+                while (asyncTest_loadAssetDone == false)
+                {
+                    /// 대기중 ..
+                    /// 로딩동안 메인 로직이 도는거를 시뮬레이션 . . . 
+                    /// 아래 로직에서 메인 로직이 돌겠지 ? 
+                }
+            }
+        }
 
         /// <summary>
         /// C# 의 Async/Await 키워드 테스트 
         /// </summary>
-        static void AsyncTest()
+        static void AsyncTest_GameLogic()
         {
             AsyncTest_SetGameState(AsyncTestGameState.DownloadingAsset);
 
@@ -434,7 +482,6 @@ namespace ConsoleApp3
             {
                 /// 메인 게임 로직 . 현재 비동기로 돌고있는 
                 /// <see cref="AsyncTest_SetGameState"/> 와는 별개로 돌음. 
-
             }
 
             PadLines(1);
@@ -559,6 +606,73 @@ namespace ConsoleApp3
             Print($"Task 의 ID : {taskIdCheck01.Id}");
             #endregion
         }
+
+        #endregion
+
+        #region Async Test 02 - 로딩 
+        /// <summary>
+        /// Async 로 로딩 시뮬레이션 
+        /// AsyncTest_LoadAsset 의 Return Type 에 Task 가 아닌 void 왜냐면
+        /// 이 함수를 Calling 하는 측에서 기다릴 필요없으니( await 키워드를 쓸 필요가 없으니 )
+        /// 그리고 void 타입은 Event Handler 로도 사용 가능 ,
+        /// 즉 Action a = <see cref="AsyncTest_LoadAsset"/> 이 가능 . 
+        /// 하지만 Return Type 이 Task 라면
+        /// Action<Task> a; 는 불가. 
+        /// </summary>
+        static bool asyncTest_loadAssetDone;
+
+        static async void AsyncTest_LoadAsset()
+        {
+            List<string> loadedAssetNames = new List<string>();
+
+            /// await <see cref="AsyncTest_Load"/> 즉 
+            /// 해당 함수를 호출하며 Block 시킴 . 
+            /// 끝나는 시점은 해당 Task 가 끝나는 시점임 . 
+            /// ++ <see cref="AsyncTest_Load"/> 함수의 Return type 이
+            /// Task<double> 이기에 값을 저장 가능 . 
+            /// 만약 Return Type 이 async void 였다면 
+            /// await AsyncTest_LoadAsset(loadedAssetNames);
+            var timeTaken = await AsyncTest_Load(loadedAssetNames);
+
+            /// 위에 await 키워드로 함수가 끝난 후에 아래 코드 실행
+            PadLines();
+
+            Print($"-- 로딩 완료 목록 (걸린시간 {timeTaken}) --");
+
+            PadLines();
+
+            for (int i = 0; i < loadedAssetNames.Count; i++)
+            {
+                Print(loadedAssetNames[i]);
+            }
+
+            asyncTest_loadAssetDone = true;
+        }
+
+        /// <summary>
+        /// return type 이 async Task 인 이유는, 이 함수를 호출하는 측에서 (Caller)
+        /// await 로 <대기> 가 가능해야하기 때문.
+        /// 
+        /// </summary>
+        static async Task<double> AsyncTest_Load(List<string> completedAssetNameList)
+        {
+            double timeTaken = 0;
+
+            for (int i = 0; i < 10; i++)
+            {
+                /// await 키워드로 일정 시간이 지난후에 끝나는 Task 생성 및 대기 . 
+                await Task.Delay(TimeSpan.FromSeconds(0.4));
+                timeTaken += 0.4;
+
+                string loadedAssetName = $"Hero{i}";
+                completedAssetNameList.Add(loadedAssetName);
+                Print(loadedAssetName + "이 로딩됨");
+            }
+
+            return timeTaken;
+        }
+
+        #endregion
 
         #endregion
 
