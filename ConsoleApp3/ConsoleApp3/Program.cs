@@ -87,8 +87,11 @@ namespace ConsoleApp3
             //LambdaVariableCaptureTest();
             //HandleBatchFile();
 
+            #region Async 테스트 (Case 별)
+            AsyncTest(AsyncTestCase.LongCalculation);
             // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
-            AsyncTest(AsyncTestCase.AsyncTest_Loading);
+            // AsyncTest(AsyncTestCase.AsyncTest_Loading);
+            #endregion
         }
 
         public static async Task DisplayCurrentInfoAsync()
@@ -433,8 +436,9 @@ namespace ConsoleApp3
         public enum AsyncTestCase
         {
             None = 0,
-            AsyncTest_GameLogic,
-            AsyncTest_Loading
+            LongCalculation, /// 길고 긴~~ 연산하기 . 연산 하는동안 UI Thread 가 멈춰서는 안됨 . 
+            AsyncTest_GameLogic, /// 보통 게임의 로직을 구현 
+            AsyncTest_Loading /// 길고 긴 로딩 구현 
         }
 
         public enum AsyncTestGameState
@@ -446,17 +450,19 @@ namespace ConsoleApp3
             CloseGame
         }
 
-        #region Async Test 01 - 게임 로직편
-
         private static AsyncTestGameState asyncTest_GameState;
 
         static void AsyncTest(AsyncTestCase testCase)
         {
-            if(testCase == AsyncTestCase.AsyncTest_GameLogic)
+            if (testCase == AsyncTestCase.LongCalculation)
+            {
+                AsyncTest_LongCalc();
+            }
+            else if (testCase == AsyncTestCase.AsyncTest_GameLogic)
             {
                 AsyncTest_GameLogic();
             }
-            else if(testCase == AsyncTestCase.AsyncTest_Loading)
+            else if (testCase == AsyncTestCase.AsyncTest_Loading)
             {
                 AsyncTest_LoadAsset();
 
@@ -470,6 +476,68 @@ namespace ConsoleApp3
                 }
             }
         }
+
+        #region Async Test - 아주 ~~ 긴 ~~ 연산 
+        private static bool isAsyncTest_longCalcAllDone;
+
+        private static void AsyncTest_LongCalc()
+        {
+            AsyncTest_PrintTotalLongCalcResult();
+            
+            while(true)
+            {
+                /// Front End task ... 
+                /// (UI Thread task ....)
+                /// 여기서는 게임의 뭐 메인 로직 ? 돌거임 ㅇㅇ 
+            }
+        }
+
+        /// <summary>
+        /// 길고 긴 연산을 통해 얻을수 있는 값을 출력하는데
+        /// 연산이 아주 길기때문에 async 로 비동기로 BackGround 즉
+        /// Worker Thread 를 이용해서 실행함. 
+        /// </summary>
+        private static async void AsyncTest_PrintTotalLongCalcResult()
+        {
+            Print("Result01 계산전 밀리세컨드 시간 : " + DateTime.Now.Millisecond);
+
+            var result01 = await AsyncTest_DoLongCalc(1000000);
+
+            Print("Result01 계산후 밀리세컨드 시간 : " + DateTime.Now.Millisecond);
+
+            PadLines();
+
+            Print("Result02 계산전 밀리세컨드 시간 : " + DateTime.Now.Millisecond);
+
+            var result02 = await AsyncTest_DoLongCalc(50000000);
+
+            Print("Result02 계산후 밀리세컨드 시간 : " + DateTime.Now.Millisecond);
+
+            Print("합산 : " + (result01 + result02).ToString("n0"));
+
+            isAsyncTest_longCalcAllDone = true;
+        }
+
+        private static async Task<ulong> AsyncTest_DoLongCalc(ulong loopCnt)
+        {
+            Print("반복 숫자 : " + loopCnt);
+
+            return await Task.Run(() =>
+            {
+                ulong result = 0;
+
+                for (ulong i = 0; i < loopCnt; i++)
+                {
+                    result += i;
+                }
+
+                return result;
+            });
+        }
+
+        #endregion
+
+        #region Async Test - 게임 로직편
 
         /// <summary>
         /// C# 의 Async/Await 키워드 테스트 
@@ -609,7 +677,7 @@ namespace ConsoleApp3
 
         #endregion
 
-        #region Async Test 02 - 로딩 
+        #region Async Test - 로딩 
         /// <summary>
         /// Async 로 로딩 시뮬레이션 
         /// AsyncTest_LoadAsset 의 Return Type 에 Task 가 아닌 void 왜냐면
