@@ -88,7 +88,8 @@ namespace ConsoleApp3
             //HandleBatchFile();
 
             #region Async 테스트 (Case 별)
-            AsyncTest(AsyncTestCase.LongCalculation);
+            AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
+            // AsyncTest(AsyncTestCase.LongCalculation);
             // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
             // AsyncTest(AsyncTestCase.AsyncTest_Loading);
             #endregion
@@ -436,6 +437,7 @@ namespace ConsoleApp3
         public enum AsyncTestCase
         {
             None = 0,
+            AsyncVoidEventHandler,
             LongCalculation, /// 길고 긴~~ 연산하기 . 연산 하는동안 UI Thread 가 멈춰서는 안됨 . 
             AsyncTest_GameLogic, /// 보통 게임의 로직을 구현 
             AsyncTest_Loading /// 길고 긴 로딩 구현 
@@ -454,7 +456,11 @@ namespace ConsoleApp3
 
         static void AsyncTest(AsyncTestCase testCase)
         {
-            if (testCase == AsyncTestCase.LongCalculation)
+            if (testCase == AsyncTestCase.AsyncVoidEventHandler)
+            {
+                AsyncTest_AsyncVoidEventHandler();
+            }
+            else if (testCase == AsyncTestCase.LongCalculation)
             {
                 AsyncTest_LongCalc();
             }
@@ -477,14 +483,71 @@ namespace ConsoleApp3
             }
         }
 
+        #region Async 이면서 Void 의 Return Type 을 가지는 메서드를 Event Handler 로 쓰기 
+        private static void AsyncTest_AsyncVoidEventHandler()
+        {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            float s = 0;
+            float t = 0f;
+            Action handler = AsyncTest_AsyncVoidReturnTypeMethod;
+
+            int n = 0;
+            
+            /// 메인 루프 while
+            while (true)
+            {
+                /// 2 초에 한번씩 
+                if (watch.Elapsed.Seconds - s > 2)
+                {
+                    s += 2f;
+                    Console.WriteLine("Main Logic 2 Seconds passed !");
+
+                    n++;
+                    if (n == 2)
+                    {
+                        Console.WriteLine("CALL!");
+
+                        /// 비동기 이벤트 핸들러 호출~!
+                        handler.Invoke();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// async void 타입의 이벤트 핸들러용 메서드.
+        /// </summary>
+        public async static void AsyncTest_AsyncVoidReturnTypeMethod()
+        {
+            /// 현재 메서드는 async 즉 비동기 가능 함수이기에 
+            /// await 사용 가능 . 
+            /// await 는 Task,Task<T> 객체들을 반환해주는 쪽에서 
+            /// 작업을 마칠때까지 비동기로 기다릴수있음 . 
+            /// 즉 기다리는 동안 UI 쓰레드는 여전히 계속 실행되는 상태 .
+            /// 그래서 아래 Task.Delay() 는 파라미터로 지정한 시간만큼 
+            /// 대기한후에 작업을 끝내줌 . 
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            Print("One sec passed!");
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+            Print("Two sec passed!");
+
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            Print("Three sec passed!");
+        }
+
+        #endregion
+
         #region Async Test - 아주 ~~ 긴 ~~ 연산 
         private static bool isAsyncTest_longCalcAllDone;
 
         private static void AsyncTest_LongCalc()
         {
             AsyncTest_PrintTotalLongCalcResult();
-            
-            while(true)
+
+            while (true)
             {
                 /// Front End task ... 
                 /// (UI Thread task ....)
