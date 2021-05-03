@@ -25,3 +25,12 @@ C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\
 C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CopyComplete
 C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.exe
 C:\Users\이윤선\Desktop\ConsoleProjects\TEST_Archive\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.pdb
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe.config
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.exe
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\bin\Debug\ConsoleApp3.pdb
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\bin\Debug\Ionic.Zip.dll
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csprojAssemblyReference.cache
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CoreCompileInputs.cache
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\obj\Debug\ExperimentProject.csproj.CopyComplete
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.exe
+D:\GIT\ConsoleTest\ConsoleApp3\ConsoleApp3\obj\Debug\ConsoleApp3.pdb

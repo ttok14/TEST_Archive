@@ -86,9 +86,11 @@ namespace ConsoleApp3
             // DateTime_TimeSpanTest();
             //LambdaVariableCaptureTest();
             //HandleBatchFile();
+            //ReadOnlyStructTest();
+            UnicodeCharacterAdvanceTest();
 
             #region Async 테스트 (Case 별)
-            AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
+            //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
             // AsyncTest(AsyncTestCase.LongCalculation);
             // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
             // AsyncTest(AsyncTestCase.AsyncTest_Loading);
@@ -433,6 +435,148 @@ namespace ConsoleApp3
             }
         }
 
+        #region Immutable 데이터 타입 만들기 테스트 
+        /// <summary>
+        /// https://exceptionnotfound.net/csharp-in-simple-terms-8-structs-and-enums/#:~:text=Structs%20and%20enums%20are%20both,constructors%2C%20methods%2C%20and%20properties.&text=We%20can%20use%20any%20integer,and%20int%20is%20the%20default.
+        /// Microsoft 에서 권장하는 구조체 (struct) 의 사용 법중 하나가, 구조체를 immutable 하게 구현하라는 거임. 
+        /// 하나의 Immutable 구조체는 값을 해당 변수를 '생성' 할때만 오직 초기화 할 수 있는 구조체임. 
+        /// 구조체를 immutable 하게 만들수 있는 방법은 , <see cref="readonly"/> 타입을 사용하는 거임.  
+        /// </summary>
+        public readonly struct ReadOnlyStruct
+        {
+            public ReadOnlyStruct(string name, int age)
+            {
+                Name = name;
+                Age = age;
+            }
+
+            public string Name { get; }
+            public int Age { get; }
+            /// readonly 구조체인데 , set property 가 존재함 => syntax error 발생 
+            /// public int Age_ErrorVersion { get; set; }
+
+            public void Print()
+            {
+                Console.WriteLine($"Name : {Name}, Age : {Age}");
+            }
+        }
+
+        static void ReadOnlyStructTest()
+        {
+            ReadOnlyStruct person = new ReadOnlyStruct("제이스", 29);
+            person.Print();
+
+            /// 당연히 syntax error 발생 
+            /// person.Age = "15";
+        }
+
+        #endregion
+
+        #region char 문자 타입의 Unicode Category 검사 및 다양한 활용 테스트 
+        /// <summary>
+        /// 표 참고 https://unicode.org/charts/PDF/UAC00.pdf
+        /// </summary>
+        static void UnicodeCharacterAdvanceTest()
+        {
+            string str = "ㅋ012 !@ abc DEF ㄱㄷㄴ 이것은 한글 데스네 ㅗㅜ . \n 호호 HaHa";
+
+            Console.WriteLine($"테스트 문자열 : {str}");
+
+            PadLines();
+
+            foreach (var c in str)
+            {
+                var codeCtg = char.GetUnicodeCategory(c);
+
+                Console.WriteLine("----------");
+
+                Console.WriteLine($"문자 : {c} , unicode : {(int)c} , unicodeCategory : {codeCtg}");
+                switch (codeCtg)
+                {
+                    case System.Globalization.UnicodeCategory.LowercaseLetter:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 소문자 | {codeCtg}");
+                        break;
+                    case System.Globalization.UnicodeCategory.UppercaseLetter:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 대문자 | {codeCtg}");
+                        break;
+
+                    case System.Globalization.UnicodeCategory.SpaceSeparator:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 스페이스 | {codeCtg}");
+                        break;
+                    case System.Globalization.UnicodeCategory.OtherLetter:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 기타 , 속하지 않는 문자 (한글, 한문 etc..) | {codeCtg}");
+                        break;
+                    default:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 기타 | {codeCtg}");
+                        break;
+                }
+
+                /// 한국어인지 체크 
+                if (IsKorean(c))
+                {
+                    Console.WriteLine("한국어 O");
+
+                    /// 한국어면은 완성 글자인지 체크 
+                    if (IsCompletedKoreanLetter(c))
+                    {
+                        Print("완성형");
+                    }
+                    else
+                    {
+                        Print("미완성형");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 한국어인지 체크 
+        /// </summary>
+        static bool IsKorean(char c)
+        {
+            /// 해당 character 를 정수 코드로 변환. 
+            /// (유니코드)
+            var value = (int)c;
+
+            /// 한글의 처음 유니코드 정수값 (표참고)
+            var korean_ucd_from = (int)'ㄱ';
+            /// 한글의 끝 유니코드 정수값 (표참고)
+            var korean_ucd_to = (int)'힣';
+
+            return value >= korean_ucd_from && value <= korean_ucd_to;
+        }
+
+        /// <summary>
+        /// 완성형 한글인지 체크 
+        /// e.g
+        ///     가 -> 완성형 
+        ///     나 -> 완성형 
+        ///     ㄷ -> 미완성형
+        ///     ㄹ -> 미완성형 
+        ///     뻑 -> 완성형
+        ///     ㅏ -> 미완성형
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        static bool IsCompletedKoreanLetter(char c)
+        {
+            /// 해당 character 를 정수 코드로 변환. 
+            /// (유니코드)
+            var value = (int)c;
+
+            /// 한글의 글자 처음 유니코드 정수값 (표참고)
+            var from = (int)'가';
+            /// 한글의 끝 유니코드 정수값 (표참고)
+            var to = (int)'힣';
+
+            return value >= from && value <= to;
+        }
+        #endregion
+
         #region Async & Await 테스트 
         public enum AsyncTestCase
         {
@@ -494,7 +638,7 @@ namespace ConsoleApp3
             Action handler = AsyncTest_AsyncVoidReturnTypeMethod;
 
             int n = 0;
-            
+
             /// 메인 루프 while
             while (true)
             {
