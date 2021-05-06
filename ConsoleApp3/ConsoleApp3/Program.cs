@@ -17,6 +17,29 @@ using System.Reflection;
 using System.Threading;
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
+/// <summary>
+/// ====== 테스트 목록 =======
+/// <see cref="ConsoleApp3.Program.BasicMathOperationSpeedTest"/> - 연산 속도 테스트
+/// <see cref="ConsoleApp3.Program.IonicSaveZip"/> - ionic 을 이용해서 zip 조작하기
+/// <see cref="ConsoleApp3.Program.EncryptionDecryptionTest"/> - 부호화/복호화 테스트 
+/// <see cref="ConsoleApp3.Program.LinqUsage"/> - Linq 클래스 활용 테스트 
+/// <see cref="ConsoleApp3.Program.ExcelTest"/> - 엑셀 조작 테스트 
+/// <see cref="ConsoleApp3.Program.ReflectionTest"/> - Reflection 테스트 
+/// <see cref="ConsoleApp3.Program.RegexTest"/> - 정규식 (Regular Expression) 테스트 
+/// <see cref="ConsoleApp3.Program.BitOperationTest"/> - 비트 연산 테스트
+/// <see cref="ConsoleApp3.Program.CharacterTest"/> - 문자 테스트 , 아스키코드/유니코드 etc
+/// <see cref="ConsoleApp3.Program.SortTest"/> - 정렬(Sorting) 테스트 및 활용법들 
+/// <see cref="ConsoleApp3.Program.ConvarianceTest"/> - 공변성/반공변성 (generic parameter 앞에 in,out) 테스트  
+/// <see cref="ConsoleApp3.Program.DateTime_TimeSpanTest"/> - DateTime 이랑 TimeSpan 활용 테스트 
+/// <see cref="ConsoleApp3.Program.LambdaVariableCaptureTest"/> - 람다 Closure 테스트
+/// <see cref="ConsoleApp3.Program.BatchFileUsageTest"/> - 배치 파일 조작 테스트 
+/// <see cref="ConsoleApp3.Program.ReadOnlyStructTest"/> - 구조체를 Readonly 로 활용하기 테스트 (immutable 구조체만들기)
+/// <see cref="ConsoleApp3.Program.UnicodeCharacterAdvanceTest"/> - 유니코드 문자 테스트 , 심화편 . ( 한글 체킹 여부 등 )
+/// <see cref="ConsoleApp3.Program.WeakReferenceTest"/> - WeakReference 활용 테스트 ----------------------------------------------------- TODO 
+/// <see cref="ConsoleApp3.Program.StringTextUsageTest"/> - String 활용 (Split 등 ..)
+/// <see cref="ConsoleApp3.Program.EnvironmentClassUsageTest"/> EnvironmentClassUsageTest - Environment 클래스 활용 테스트 ----------------------------------------------------- TODO 
+/// <see cref="ConsoleApp3.Program.AsyncTest"/> - 비동기 async,await,task 관련 활용 테스트 
+/// </summary>
 namespace ConsoleApp3
 {
     class Program
@@ -85,9 +108,12 @@ namespace ConsoleApp3
             // ConvarianceTest();
             // DateTime_TimeSpanTest();
             //LambdaVariableCaptureTest();
-            //HandleBatchFile();
+            //BatchFileUsageTest();
             //ReadOnlyStructTest();
-            UnicodeCharacterAdvanceTest();
+            //UnicodeCharacterAdvanceTest();
+            // WeakReferenceTest();
+            //EnvironmentClassUsageTest();
+            StringTextUsageTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -95,22 +121,6 @@ namespace ConsoleApp3
             // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
             // AsyncTest(AsyncTestCase.AsyncTest_Loading);
             #endregion
-        }
-
-        public static async Task DisplayCurrentInfoAsync()
-        {
-            await WaitAndApologizeAsync();
-
-            Console.WriteLine($"Today is {DateTime.Now:D}");
-            Console.WriteLine($"The current time is {DateTime.Now.TimeOfDay:t}");
-            Console.WriteLine("The current temperature is 76 degrees.");
-        }
-
-        static async Task WaitAndApologizeAsync()
-        {
-            await Task.Delay(2000);
-
-            Console.WriteLine("Sorry for the delay...\n");
         }
 
         #region 제이스 테스트 코드
@@ -394,19 +404,77 @@ namespace ConsoleApp3
         /// <summary>
         ///  배치파일 조작 테스트 
         /// </summary>
-        static void HandleBatchFile()
+        static void BatchFileUsageTest()
         {
+            #region SVN Revision 정보 가져오기 
+            /// 여기에 svn 프로젝트 폴더의 path 를 넣으셈
+            string svnWorkingCopyPath = @"WorkingCopyPath"; /// 이카루스 기준 C:\Projects\SVN\IE_Sub 였음 . 210504 오호..
+
+            ProcessStartInfo info2 = new ProcessStartInfo("svn", $@"info {svnWorkingCopyPath}");
+            info2.WindowStyle = ProcessWindowStyle.Hidden;
+            info2.RedirectStandardOutput = true;
+            info2.RedirectStandardError = true;
+            info2.UseShellExecute = false;
+
+            var pc2 = Process.Start(info2);
+
+            var resultStr2 = pc2.StandardOutput.ReadToEnd();
+            var error2 = pc2.StandardError.ReadToEnd();
+            bool workingCopyExist = string.IsNullOrEmpty(error2);
+
+            /// error 문이 존재 
+            /// => 해당 working copy 없음 
+            if (workingCopyExist == false)
+            {
+                Print(error2);
+                Print($"타겟 path : {svnWorkingCopyPath}");
+            }
+            /// 해당 path 가 workin copy 라면 
+            /// 정상적으로 출력 
+            else
+            {
+                #region SVN 의 Revision 확인하기 
+                ProcessStartInfo info = new ProcessStartInfo("svn", $@"info {svnWorkingCopyPath}");
+                info.WindowStyle = ProcessWindowStyle.Hidden;
+                info.RedirectStandardOutput = true;
+                info.RedirectStandardError = true;
+                info.UseShellExecute = false;
+
+                var pc = Process.Start(info);
+
+                var resultStr = pc.StandardOutput.ReadToEnd();
+                var error = pc.StandardError.ReadToEnd();
+
+                if (string.IsNullOrEmpty(error) == false)
+                {
+                    Print(error);
+                }
+                else
+                {
+                    Print(resultStr);
+                }
+                #endregion
+            }
+            #endregion
+
+            Print("=============================================================");
+
+            #region 일정 시간후에 자동으로 종료하기 (Shutdown)
             //System.Diagnostics.Process.Start("mspaint.exe");
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.CreateNoWindow = false;
             startInfo.UseShellExecute = false;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = "shutdown.exe"; //  @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
-            startInfo.Arguments = "-s -t 3000";
+            startInfo.FileName = "shutdown.exe";
+            startInfo.Arguments = "-s -t 9999"; /// 자동종료 예약한거 취소하려면 argument 를 -a 로 설정 ㄱㄱ (abort)
+
+            #region ADB 연결중인 기기 모드 Disconnect 하기 
+            //  @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
 
             /// 아래 코드는 ADB 에 연결중인 기기들을 끊음 
             // startInfo.FileName = @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
             // startInfo.Arguments = "disconnect";
+            #endregion
 
             try
             {
@@ -433,6 +501,7 @@ namespace ConsoleApp3
             catch
             {
             }
+            #endregion
         }
 
         #region Immutable 데이터 타입 만들기 테스트 
@@ -1686,6 +1755,80 @@ namespace ConsoleApp3
             //   test.TestDelegate();
         }
 
+        #endregion
+
+        #region WeakReference 테스트 
+        /// <summary>
+        /// TODO 
+        /// </summary>
+        static void WeakReferenceTest()
+        {
+
+        }
+        #endregion
+
+        #region Environment 클래스 Usage 테스트 
+        /// <summary>
+        /// TODO 
+        /// </summary>
+        static void EnvironmentClassUsageTest()
+        {
+            Print($"텍스트1{System.Environment.NewLine}텍스트2{System.Environment.NewLine}텍스트3{System.Environment.NewLine}");
+        }
+        #endregion
+
+        #region Text 핸들링 Usage 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        static void StringTextUsageTest()
+        {
+            #region Split 
+            string[] str = new string[]
+            {
+                "Show me the money,    Crack the Code Right now" , " abc ,,,   ,  "
+            };
+
+            #region 생 Split 
+            Print("======== Split , 파라미터 X =========");
+
+            foreach (var s in str)
+            {
+                var split = s.Split(new char[] { ',' });
+
+                Print($"---- {split} 을 Split ---- ");
+                if (split != null)
+                {
+                    foreach (var s_ in split)
+                    {
+                        Print($"SplitResult : {s_}");
+                    }
+                }
+            }
+            #endregion
+
+            PadLines(2);
+
+            #region 빈 문자열은 제외시키는 옵션 StringSplitOptions.RemoveEmptyEntries 사용
+            Print("======== Split , 파라미터 StringSplitOptions.RemoveEmptyEntires (split 된 결과 string 이 empty 라면 애초에 리턴 값에서 제외됨) =========");
+            /// => 스페이스는 Empty 가 아니기에 제외되지 않음 .
+            foreach (var s in str)
+            {
+                var split = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                Print($"---- {split} 을 Split ---- ");
+                if (split != null)
+                {
+                    foreach (var s_ in split)
+                    {
+                        Print($"SplitResult : {s_}");
+                    }
+                }
+            }
+            #endregion
+            #endregion
+
+        }
         #endregion
     }
 }
