@@ -15,6 +15,7 @@ using System.Diagnostics;
 using ConsoleApp3.ClassUnitTest.LambdaVariableCaptureTest;
 using System.Reflection;
 using System.Threading;
+using System.Collections;
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
 /// <summary>
@@ -39,6 +40,8 @@ using System.Threading;
 /// <see cref="ConsoleApp3.Program.StringTextUsageTest"/> - String 활용 (Split 등 ..)
 /// <see cref="ConsoleApp3.Program.EnvironmentClassUsageTest"/> EnvironmentClassUsageTest - Environment 클래스 활용 테스트 ----------------------------------------------------- TODO 
 /// <see cref="ConsoleApp3.Program.AsyncTest"/> - 비동기 async,await,task 관련 활용 테스트 
+/// <see cref="ConsoleApp3.Program.TupleTest"/> - Tuple 활용법 테스트 
+/// <see cref="ConsoleApp3.Program.IterationUsageTest"/> - Iteration 테스트 (ICollection, IList , 등등 ..)
 /// </summary>
 namespace ConsoleApp3
 {
@@ -74,7 +77,7 @@ namespace ConsoleApp3
             Console.Write(str.ToString() + paddingStr);
         }
 
-        static void PadLines(int lineCount = 1)
+        static void PadLines(int lineCount = 1, bool printSeparator = false)
         {
             string str = "";
 
@@ -85,6 +88,11 @@ namespace ConsoleApp3
 
             if (string.IsNullOrEmpty(str) == false)
                 Console.Write(str);
+
+            if (printSeparator)
+            {
+                Console.WriteLine("================================");
+            }
         }
         #endregion
 
@@ -98,7 +106,7 @@ namespace ConsoleApp3
             //BasicMathOperationSpeedTest();
             //IonicSaveZip();
             //EncryptionDecryptionTest();
-            // LinqUsage();
+            LinqUsage();
             // ExcelTest();
             // ReflectionTest();
             // RegexTest();
@@ -112,8 +120,10 @@ namespace ConsoleApp3
             //ReadOnlyStructTest();
             //UnicodeCharacterAdvanceTest();
             // WeakReferenceTest();
-            //EnvironmentClassUsageTest();
-            StringTextUsageTest();
+            // EnvironmentClassUsageTest();
+            // StringTextUsageTest();
+            //TupleTest();
+            // IterationUsageTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -1020,6 +1030,26 @@ namespace ConsoleApp3
 
         #endregion
 
+        #region Linq 테스트 
+        public class LinqTest_Student
+        {
+            public string name;
+            public int score;
+            public int age;
+
+            public LinqTest_Student(string name, int score, int age)
+            {
+                this.name = name;
+                this.score = score;
+                this.age = age;
+            }
+
+            public void Print()
+            {
+                Program.Print($"이름 : {name} , 점수 : {score} , 나이 : {age}");
+            }
+        }
+
         /*
          * Linq 는 편하지만 할당이 많이 일어나 GC 발생률을 증가시키는 함수들이 많음.
          * 고로 런타임 Update 로직에 매 프레임에 무거운 작업을 하게되는것은 최대한 피하면서 
@@ -1031,6 +1061,185 @@ namespace ConsoleApp3
          */
         static void LinqUsage()
         {
+            #region Query (orderby, where .. etc)
+            PrintL("Query 키워드 테스트");
+
+            /// 통과 기준 점수 
+            int passThreshold = 60;
+            int[] scores = new int[] { 100, 50, 20, 10, 80, 150, 185, 75, 38 };
+
+            /// 이름,점수,나이 다름 
+            LinqTest_Student[] students_all_diff = new LinqTest_Student[]
+            {
+                new LinqTest_Student("김다라", 20, 15)
+                 , new LinqTest_Student("김세진", 80, 18)
+                 , new LinqTest_Student("이국진", 50,14)
+                 , new LinqTest_Student("창세기", 95,18)
+                 , new LinqTest_Student("김호미", 40,19)
+                 , new LinqTest_Student("김계란", 18,16)
+                 , new LinqTest_Student("김국진", 95, 20)
+                 , new LinqTest_Student("이창렬", 70, 25)
+            };
+
+            /// 이름 동일 / 점수,나이 다름 
+            LinqTest_Student[] students_name_same = new LinqTest_Student[]
+            {
+                new LinqTest_Student("이름", 20, 15)
+                 , new LinqTest_Student("이름", 80, 18)
+                 , new LinqTest_Student("이름", 50,14)
+                 , new LinqTest_Student("이름", 95,18)
+                 , new LinqTest_Student("이름", 40,19)
+                 , new LinqTest_Student("이름", 18,16)
+                 , new LinqTest_Student("이름", 95, 20)
+                 , new LinqTest_Student("이름", 70, 25)
+            };
+
+            /// 이름, 점수 동일 / 나이 다름
+            LinqTest_Student[] students_diff_age = new LinqTest_Student[]
+            {
+                new LinqTest_Student("이름", 100, 15)
+                 , new LinqTest_Student("이름", 100, 18)
+                 , new LinqTest_Student("이름", 100,14)
+                 , new LinqTest_Student("이름", 100,18)
+                 , new LinqTest_Student("이름", 100,19)
+                 , new LinqTest_Student("이름", 100,16)
+                 , new LinqTest_Student("이름", 100, 20)
+                 , new LinqTest_Student("이름", 100, 25)
+            };
+
+            {
+                Print($"통과 기준 점수(score) : {passThreshold} 이상 스코어만 추리기 테스트 ");
+
+                IEnumerable<int> passedScores =
+                    from score in scores
+                    where score >= passThreshold
+                    select score;
+
+                foreach (var s in passedScores)
+                {
+                    Print($"통과한 점수(score) : {s}");
+                }
+            }
+
+            PadLines();
+
+            {
+                int rangeMin = 30;
+                int rangeMax = 60;
+
+                Print($"{rangeMin} 이상이면서 {rangeMax} 이하인 Score 들 추리기 테스트");
+
+                IEnumerable<int> scoresInRange =
+                    from score in scores
+                    where score >= rangeMin && score <= rangeMax
+                    select score;
+
+                foreach (var s in scoresInRange)
+                {
+                    Print($"Score : {s}");
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름으로 오름차순 정렬 테스트 (가나다라 ...)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_all_diff
+                    orderby student.name ascending /// ++ ascending 는 스킵가능. 디폴트 오름차순 . 
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름으로 오름차순 정렬 테스트 (가나다라 ...)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_all_diff
+                    orderby student.name ascending /// ++ ascending 는 스킵가능. 디폴트 오름차순 . 
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름으로 내림차순 정렬 테스트 (가나다라 ...)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_all_diff
+                    orderby student.name descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름 오름차순 정렬 , 이름이 완전히 동일하다면 점수 내림차순 정렬");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_name_same /// 이름이 동일해야 score 정렬 작동.
+                    orderby student.name ascending, student.score descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름 오름차순 , 점수 내림차순 , 나이 내림차순 정렬 . (뭔소리냐면, 학생 이름이 같고 점수가 같다면 나이 내림차순 적용)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_diff_age /// 이름/점수가 동일해야 , 마지막 정렬 우선순위 '나이' 가 적용됨
+                    orderby student.name ascending, student.score descending, student.age descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름 오름차순 , 점수 내림차순 , 나이 내림차순 정렬 . (뭔소리냐면, 학생 이름이 같고 점수가 같다면 나이 내림차순 적용)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_diff_age /// 이름/점수가 동일해야 , 마지막 정렬 우선순위 '나이' 가 적용됨
+                    orderby student.name ascending, student.score descending, student.age descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            #endregion
+
+            PadLines(printSeparator: true);
+
             #region Repeat
             {
                 PrintL("TEST Repeat");
@@ -1049,6 +1258,7 @@ namespace ConsoleApp3
             #endregion
 
             PadLines();
+
 
             #region Range
             {
@@ -1152,6 +1362,8 @@ namespace ConsoleApp3
 
             PadLines();
         }
+
+        #endregion
 
         // Fix 
         static void TestForeachImplement()
@@ -1812,6 +2024,11 @@ namespace ConsoleApp3
             #region 빈 문자열은 제외시키는 옵션 StringSplitOptions.RemoveEmptyEntries 사용
             Print("======== Split , 파라미터 StringSplitOptions.RemoveEmptyEntires (split 된 결과 string 이 empty 라면 애초에 리턴 값에서 제외됨) =========");
             /// => 스페이스는 Empty 가 아니기에 제외되지 않음 .
+            /// => 예를 들어 "12,,,ABC 를 콤마( , ) 로 Split 을 하면
+            /// [0] = 1
+            /// [1] = 2
+            /// [2] = 
+            /// ... 이런식인데 여기서 [2] 같은 빈 값을 애초에 return 해주지 않게해주는 옵션. 
             foreach (var s in str)
             {
                 var split = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1828,6 +2045,23 @@ namespace ConsoleApp3
             #endregion
             #endregion
 
+        }
+        #endregion
+
+        #region Tuple Test
+        static void TupleTest()
+        {
+            var test = new ConsoleApp3.ClassUnitTest.Tuple.TupleTest();
+
+            test.RunTupleTest();
+        }
+        #endregion
+
+        #region Iteration Usage Test
+        static void IterationUsageTest()
+        {
+            var test = new ConsoleApp3.ClassUnitTest.Iteration.IterationTest();
+            test.RunTest();
         }
         #endregion
     }
