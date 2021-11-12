@@ -63,8 +63,29 @@ namespace ConsoleApp3
             if (string.IsNullOrEmpty(str) == false)
                 Console.Write(str);
         }
-        #endregion
 
+        static double ConvertBytesToKillobytes(long bytes)
+        {
+            return bytes / 1024f;
+        }
+
+        static double ConvertBytesToMegabytes(long bytes)
+        {
+            return (bytes / 1024f) / 1024f;
+        }
+
+        static double ConvertKilobytesToMegabytes(long kilobytes)
+        {
+            return kilobytes / 1024f;
+        }
+
+        static public string ToStringConvertedKbAndMb(long bytes)
+        {
+            return $"{ConvertBytesToKillobytes(bytes).ToString("n0")} KB , {ConvertBytesToMegabytes(bytes).ToString("n0")} MB";
+        }
+
+        #endregion
+        
         static void Main(string[] args)
         {
             //// 기본 테스트 환경 세팅 . ///////////
@@ -77,6 +98,7 @@ namespace ConsoleApp3
             //EncryptionDecryptionTest();
             // LinqUsage();
             // ExcelTest();
+            InspectProcessAndMemoryInfo();
             // ReflectionTest();
             // RegexTest();
             // BitOperationTest();
@@ -88,7 +110,7 @@ namespace ConsoleApp3
             //HandleBatchFile();
 
             #region Async 테스트 (Case 별)
-            AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
+            // AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
             // AsyncTest(AsyncTestCase.LongCalculation);
             // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
             // AsyncTest(AsyncTestCase.AsyncTest_Loading);
@@ -494,7 +516,7 @@ namespace ConsoleApp3
             Action handler = AsyncTest_AsyncVoidReturnTypeMethod;
 
             int n = 0;
-            
+
             /// 메인 루프 while
             while (true)
             {
@@ -1285,9 +1307,135 @@ namespace ConsoleApp3
 
         }
 
+        /// <summary>
+        /// - https://www.sysnet.pe.kr/2/0/1850 참고 -
+        /// 작업 관리자 말고 , Process 정보 디테일하게 보려면
+        /// Process explorer 다운 ㄱㄱ 
+        ///     - https://docs.microsoft.com/en-us/sysinternals/downloads/process-explorer?WT.mc_id=DT-MVP-4038148
+        ///     - 근데 Process explorer 는 '가상 메모리 사이즈' 를 정확히 보여주지는 않는다고함. 
+        ///     - 여기서는 정확히 보여준다고함 
+        ///      - https://docs.microsoft.com/en-us/sysinternals/downloads/vmmap?WT.mc_id=DT-MVP-4038148
+        /// </summary>
+        static void InspectProcessAndMemoryInfo()
+        {
+            Process curProcess = Process.GetCurrentProcess();
+
+            #region ====:: 현재 Process 의 각종 정보 출력해보기 ::====
+
+            Print("----- Process 정보 출력 테스트 -----");
+            {
+                PadLines();
+
+                Print("--- Main 정보 ---");
+                {
+                    Print($"Id : {curProcess.Id}");
+                    Print($"FileName : {curProcess.MainModule.FileName}");
+                    Print($"ProcessName : {curProcess.ProcessName}");
+                    Print($"MachineName : {curProcess.MachineName}");
+                    Print($"ModuleName : {curProcess.MainModule.ModuleName}");
+                    Print($"ThreadsCount : {curProcess.Threads.Count}");
+
+                    // 종료될떄 ExitCode (e.g. Cmd) Print($"ExitCode : {curProcess.ExitCode}");
+                    Print($"Handle : {curProcess.Handle}");
+                    /// 해당 Window 가 Focus 됐을때 Operating System 의 Scheduler 가 작업 우선순위를 높일지에 대한 True / False 값 
+                    ///     => 우선순위를 높히면 CPU 자원을 더 사용한다라는 의미. 즉 , 프로그램이 더 빨리 돌겠지 ? 
+                    Print($"PriorityBoostEnabled : {curProcess.PriorityBoostEnabled}");
+                    Print($"StartTime : {curProcess.StartTime}");
+
+                    var processFound = Process.GetProcessById(curProcess.Id);
+                    if (processFound == null)
+                    {
+                        Print("Could not find process");
+                    }
+                    else
+                    {
+                        Print("ProcessFound Handle : " + processFound.Handle);
+                    }
+                }
+
+                PadLines();
+
+                Print("--- Process FileVersion 정보 출력 ---", 1);
+                {
+                    var fileVersionInfo = curProcess.MainModule.FileVersionInfo;
+
+                    Print($"FileVersionInfo_Comments : {fileVersionInfo.Comments}");
+                    Print($"FileVersionInfo_FileName : {fileVersionInfo.FileName}");
+                    Print($"FileVersionInfo_FileVersion : {fileVersionInfo.FileVersion}");
+                    Print($"FileVersionInfo_CompanyName : {fileVersionInfo.CompanyName}");
+                    Print($"FileVersionInfo_InternalName : {fileVersionInfo.InternalName}");
+                    Print($"FileVersionInfo_IsDebug : {fileVersionInfo.IsDebug}");
+                    Print($"FileVersionInfo_Language : {fileVersionInfo.Language}");
+                    Print($"FileVersionInfo_LegalCopyright : {fileVersionInfo.LegalCopyright}");
+                    Print($"FileVersionInfo_LegalTrademarks : {fileVersionInfo.LegalTrademarks}");
+                    Print($"FileVersionInfo_OriginalFilename : {fileVersionInfo.OriginalFilename}");
+                    Print($"FileVersionInfo_ProductName : {fileVersionInfo.ProductName}");
+                    Print($"FileVersionInfo_ProductVersion : {fileVersionInfo.ProductVersion}");
+                    Print($"FileVersionInfo_FileDescription : {fileVersionInfo.FileDescription}");
+                }
+
+                PadLines();
+
+                Print("--- Memory 관련 정보 ---", 1);
+                {
+                    /// 프로그램의 Entry Method 의 Address 
+                    ///     => 즉 <see cref="Main(string[])"/> 함수 주소 인거같음 . 
+                    Print($"EntryPointAddress : {curProcess.MainModule.EntryPointAddress}");
+                    Print($"PagedMemorySize64 : {curProcess.PagedMemorySize64} ({ToStringConvertedKbAndMb(curProcess.PagedMemorySize64)})");
+                    Print($"PagedSystemMemorySize64 (작업 관리자 -> 세부 정보 -> 페이징 풀) : {curProcess.PagedSystemMemorySize64} ({ToStringConvertedKbAndMb(curProcess.PagedSystemMemorySize64)})");
+                    Print($"PeakPagedMemorySize64 : {curProcess.PeakPagedMemorySize64} ({ToStringConvertedKbAndMb(curProcess.PeakPagedMemorySize64)})");
+                    Print($"PeakVirtualMemorySize64 : {curProcess.PeakVirtualMemorySize64} ({ToStringConvertedKbAndMb(curProcess.PeakVirtualMemorySize64)})");
+                    Print($"PeakWorkingSet64 (작업 관리자 -> 세부 정보 -> 작업 집합(메모리) or 최고 작업 집합(메모리)) : {curProcess.PeakWorkingSet64} ({ToStringConvertedKbAndMb(curProcess.PeakWorkingSet64)})");
+                    /// 여기서 Private 의 의미는 해당 Process 가 실제로 할당한 사이즈를 의미하는거. 즉 C/C++ 에서 사용자가 new() 로 할당하잖음? 그게 private 임 . 
+                    Print($"PrivateMemorySize64 : {curProcess.PrivateMemorySize64} ({ToStringConvertedKbAndMb(curProcess.PrivateMemorySize64)})");
+                    Print($"NonpagedSystemMemorySize64 (작업 관리자 -> 세부 정보 -> NP 풀) : {curProcess.NonpagedSystemMemorySize64} ({ToStringConvertedKbAndMb(curProcess.NonpagedSystemMemorySize64)})");
+                }
+            }
+
+            PadLines();
+
+            Print("---------------------------------------");
+
+            #endregion
+
+
+            //IntPtr startOffset = curProcess.MainModule.BaseAddress;
+            //IntPtr endOffset = IntPtr.Add(startOffset, curProcess.MainModule.ModuleMemorySize);
+            //var memoryAddresses = new List<long>();
+
+            //for (var i = startOffset.ToInt64(); i < endOffset.ToInt64(); i++)
+            //{
+            //    memoryAddresses.Add(i);
+            //}
+        }
+
         // Fix
         static void ReflectionTest()
         {
+            int intValue = 42;
+
+            Stopwatch watch = new Stopwatch();
+
+            watch.Start();
+
+            while (true)
+            {
+                if (watch.Elapsed.Seconds < 5)
+                {
+                    var type = typeof(string);
+                }
+                else if (watch.Elapsed.Seconds < 10)
+                {
+                    Type type = intValue.GetType();
+                }
+                else
+                {
+                    int n = 0;
+                }
+            }
+            //System.Int32
+            //  Print(type);
+
             ReflectionTest test = new ReflectionTest();
         }
 
