@@ -85,7 +85,7 @@ namespace ConsoleApp3
         }
 
         #endregion
-        
+
         static void Main(string[] args)
         {
             //// 기본 테스트 환경 세팅 . ///////////
