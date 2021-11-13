@@ -6,7 +6,13 @@ namespace DesignPatternTest
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            RunConditionAction();
+        }
+
+        /// <summary> 조건 부 행동 </summary>
+        static void RunConditionAction()
+        {
+            new ConditionActionRunner().RunTest();
         }
     }
 }
