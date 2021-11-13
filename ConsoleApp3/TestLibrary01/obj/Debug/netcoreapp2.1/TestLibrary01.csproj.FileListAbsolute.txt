@@ -1,0 +1,9 @@
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\bin\Debug\netcoreapp2.1\TestLibrary01.deps.json
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\bin\Debug\netcoreapp2.1\TestLibrary01.dll
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\bin\Debug\netcoreapp2.1\TestLibrary01.pdb
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\obj\Debug\netcoreapp2.1\TestLibrary01.csprojAssemblyReference.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\obj\Debug\netcoreapp2.1\TestLibrary01.csproj.CoreCompileInputs.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\obj\Debug\netcoreapp2.1\TestLibrary01.AssemblyInfoInputs.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\obj\Debug\netcoreapp2.1\TestLibrary01.AssemblyInfo.cs
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\obj\Debug\netcoreapp2.1\TestLibrary01.dll
+D:\UnityProject\TEST_Archive\ConsoleApp3\TestLibrary01\obj\Debug\netcoreapp2.1\TestLibrary01.pdb

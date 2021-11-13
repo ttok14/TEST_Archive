@@ -1,0 +1,11 @@
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\bin\Debug\netcoreapp2.1\DesignPatternTest.deps.json
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\bin\Debug\netcoreapp2.1\DesignPatternTest.runtimeconfig.json
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\bin\Debug\netcoreapp2.1\DesignPatternTest.runtimeconfig.dev.json
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\bin\Debug\netcoreapp2.1\DesignPatternTest.dll
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\bin\Debug\netcoreapp2.1\DesignPatternTest.pdb
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\obj\Debug\netcoreapp2.1\DesignPatternTest.csprojAssemblyReference.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\obj\Debug\netcoreapp2.1\DesignPatternTest.csproj.CoreCompileInputs.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\obj\Debug\netcoreapp2.1\DesignPatternTest.AssemblyInfoInputs.cache
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\obj\Debug\netcoreapp2.1\DesignPatternTest.AssemblyInfo.cs
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\obj\Debug\netcoreapp2.1\DesignPatternTest.dll
+D:\UnityProject\TEST_Archive\ConsoleApp3\DesignPatternTest\obj\Debug\netcoreapp2.1\DesignPatternTest.pdb
