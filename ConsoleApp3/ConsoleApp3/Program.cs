@@ -15,8 +15,35 @@ using System.Diagnostics;
 using ConsoleApp3.ClassUnitTest.LambdaVariableCaptureTest;
 using System.Reflection;
 using System.Threading;
+using System.Collections;
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
+/// <summary>
+/// ====== 테스트 목록 =======
+/// <see cref="ConsoleApp3.Program.BasicMathOperationSpeedTest"/> - 연산 속도 테스트
+/// <see cref="ConsoleApp3.Program.IonicSaveZip"/> - ionic 을 이용해서 zip 조작하기
+/// <see cref="ConsoleApp3.Program.EncryptionDecryptionTest"/> - 부호화/복호화 테스트 
+/// <see cref="ConsoleApp3.Program.LinqUsage"/> - Linq 클래스 활용 테스트 
+/// <see cref="ConsoleApp3.Program.ExcelTest"/> - 엑셀 조작 테스트 
+/// <see cref="ConsoleApp3.Program.ReflectionTest"/> - Reflection 테스트 
+/// <see cref="ConsoleApp3.Program.RegexTest"/> - 정규식 (Regular Expression) 테스트 
+/// <see cref="ConsoleApp3.Program.BitOperationTest"/> - 비트 연산 테스트
+/// <see cref="ConsoleApp3.Program.CharacterTest"/> - 문자 테스트 , 아스키코드/유니코드 etc
+/// <see cref="ConsoleApp3.Program.SortTest"/> - 정렬(Sorting) 테스트 및 활용법들 
+/// <see cref="ConsoleApp3.Program.ConvarianceTest"/> - 공변성/반공변성 (generic parameter 앞에 in,out) 테스트  
+/// <see cref="ConsoleApp3.Program.DateTime_TimeSpanTest"/> - DateTime 이랑 TimeSpan 활용 테스트 
+/// <see cref="ConsoleApp3.Program.LambdaVariableCaptureTest"/> - 람다 Closure 테스트
+/// <see cref="ConsoleApp3.Program.HandleBatchFileTest"/> - 배치 파일 조작 테스트 
+/// <see cref="ConsoleApp3.Program.ReadOnlyStructTest"/> - 구조체를 Readonly 로 활용하기 테스트 (immutable 구조체만들기)
+/// <see cref="ConsoleApp3.Program.UnicodeCharacterAdvanceTest"/> - 유니코드 문자 테스트 , 심화편 . ( 한글 체킹 여부 등 )
+/// <see cref="ConsoleApp3.Program.WeakReferenceTest"/> - WeakReference 활용 테스트 ----------------------------------------------------- TODO 
+/// <see cref="ConsoleApp3.Program.StringTextUsageTest"/> - String 활용 (Split 등 ..)
+/// <see cref="ConsoleApp3.Program.EnvironmentClassUsageTest"/> EnvironmentClassUsageTest - Environment 클래스 활용 테스트 ----------------------------------------------------- TODO 
+/// <see cref="ConsoleApp3.Program.AsyncTest"/> - 비동기 async,await,task 관련 활용 테스트 
+/// <see cref="ConsoleApp3.Program.TupleTest"/> - Tuple 활용법 테스트 
+/// <see cref="ConsoleApp3.Program.IterationUsageTest"/> - Iteration 테스트 (ICollection, IList , 등등 ..)
+/// <see cref="ConsoleApp3.Program.InspectProcessAndMemoryInfo"/> - Process 및 Virtual Memory 등 정보 출력 테스트 
+/// </summary>
 namespace ConsoleApp3
 {
     class Program
@@ -51,7 +78,7 @@ namespace ConsoleApp3
             Console.Write(str.ToString() + paddingStr);
         }
 
-        static void PadLines(int lineCount = 1)
+        static void PadLines(int lineCount = 1, bool printSeparator = false)
         {
             string str = "";
 
@@ -62,6 +89,11 @@ namespace ConsoleApp3
 
             if (string.IsNullOrEmpty(str) == false)
                 Console.Write(str);
+
+            if (printSeparator)
+            {
+                Console.WriteLine("================================");
+            }
         }
 
         static double ConvertBytesToKillobytes(long bytes)
@@ -83,7 +115,6 @@ namespace ConsoleApp3
         {
             return $"{ConvertBytesToKillobytes(bytes).ToString("n0")} KB , {ConvertBytesToMegabytes(bytes).ToString("n0")} MB";
         }
-
         #endregion
 
         static void Main(string[] args)
@@ -97,8 +128,8 @@ namespace ConsoleApp3
             //IonicSaveZip();
             //EncryptionDecryptionTest();
             // LinqUsage();
-            // ExcelTest();
             InspectProcessAndMemoryInfo();
+            // ExcelTest();
             // ReflectionTest();
             // RegexTest();
             // BitOperationTest();
@@ -107,10 +138,17 @@ namespace ConsoleApp3
             // ConvarianceTest();
             // DateTime_TimeSpanTest();
             //LambdaVariableCaptureTest();
-            //HandleBatchFile();
+            //BatchFileUsageTest();
+            //ReadOnlyStructTest();
+            //UnicodeCharacterAdvanceTest();
+            // WeakReferenceTest();
+            // EnvironmentClassUsageTest();
+            // StringTextUsageTest();
+            //TupleTest();
+            // IterationUsageTest();
 
             #region Async 테스트 (Case 별)
-            // AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
+            //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
             // AsyncTest(AsyncTestCase.LongCalculation);
             // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
             // AsyncTest(AsyncTestCase.AsyncTest_Loading);
@@ -414,19 +452,77 @@ namespace ConsoleApp3
         /// <summary>
         ///  배치파일 조작 테스트 
         /// </summary>
-        static void HandleBatchFile()
+        static void HandleBatchFileTest()
         {
+            #region SVN Revision 정보 가져오기 
+            /// 여기에 svn 프로젝트 폴더의 path 를 넣으셈
+            string svnWorkingCopyPath = @"WorkingCopyPath"; /// 이카루스 기준 C:\Projects\SVN\IE_Sub 였음 . 210504 오호..
+
+            ProcessStartInfo info2 = new ProcessStartInfo("svn", $@"info {svnWorkingCopyPath}");
+            info2.WindowStyle = ProcessWindowStyle.Hidden;
+            info2.RedirectStandardOutput = true;
+            info2.RedirectStandardError = true;
+            info2.UseShellExecute = false;
+
+            var pc2 = Process.Start(info2);
+
+            var resultStr2 = pc2.StandardOutput.ReadToEnd();
+            var error2 = pc2.StandardError.ReadToEnd();
+            bool workingCopyExist = string.IsNullOrEmpty(error2);
+
+            /// error 문이 존재 
+            /// => 해당 working copy 없음 
+            if (workingCopyExist == false)
+            {
+                Print(error2);
+                Print($"타겟 path : {svnWorkingCopyPath}");
+            }
+            /// 해당 path 가 workin copy 라면 
+            /// 정상적으로 출력 
+            else
+            {
+                #region SVN 의 Revision 확인하기 
+                ProcessStartInfo info = new ProcessStartInfo("svn", $@"info {svnWorkingCopyPath}");
+                info.WindowStyle = ProcessWindowStyle.Hidden;
+                info.RedirectStandardOutput = true;
+                info.RedirectStandardError = true;
+                info.UseShellExecute = false;
+
+                var pc = Process.Start(info);
+
+                var resultStr = pc.StandardOutput.ReadToEnd();
+                var error = pc.StandardError.ReadToEnd();
+
+                if (string.IsNullOrEmpty(error) == false)
+                {
+                    Print(error);
+                }
+                else
+                {
+                    Print(resultStr);
+                }
+                #endregion
+            }
+            #endregion
+
+            Print("=============================================================");
+
+            #region 일정 시간후에 자동으로 종료하기 (Shutdown)
             //System.Diagnostics.Process.Start("mspaint.exe");
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.CreateNoWindow = false;
             startInfo.UseShellExecute = false;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = "shutdown.exe"; //  @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
-            startInfo.Arguments = "-s -t 3000";
+            startInfo.FileName = "shutdown.exe";
+            startInfo.Arguments = "-s -t 9999"; /// 자동종료 예약한거 취소하려면 argument 를 -a 로 설정 ㄱㄱ (abort)
+
+            #region ADB 연결중인 기기 모드 Disconnect 하기 
+            //  @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
 
             /// 아래 코드는 ADB 에 연결중인 기기들을 끊음 
             // startInfo.FileName = @"C:\Users\Jayce\AppData\Local\Android\Sdk\platform-tools/adb.exe";
             // startInfo.Arguments = "disconnect";
+            #endregion
 
             try
             {
@@ -453,7 +549,150 @@ namespace ConsoleApp3
             catch
             {
             }
+            #endregion
         }
+
+        #region Immutable 데이터 타입 만들기 테스트 
+        /// <summary>
+        /// https://exceptionnotfound.net/csharp-in-simple-terms-8-structs-and-enums/#:~:text=Structs%20and%20enums%20are%20both,constructors%2C%20methods%2C%20and%20properties.&text=We%20can%20use%20any%20integer,and%20int%20is%20the%20default.
+        /// Microsoft 에서 권장하는 구조체 (struct) 의 사용 법중 하나가, 구조체를 immutable 하게 구현하라는 거임. 
+        /// 하나의 Immutable 구조체는 값을 해당 변수를 '생성' 할때만 오직 초기화 할 수 있는 구조체임. 
+        /// 구조체를 immutable 하게 만들수 있는 방법은 , <see cref="readonly"/> 타입을 사용하는 거임.  
+        /// </summary>
+        public readonly struct ReadOnlyStruct
+        {
+            public ReadOnlyStruct(string name, int age)
+            {
+                Name = name;
+                Age = age;
+            }
+
+            public string Name { get; }
+            public int Age { get; }
+            /// readonly 구조체인데 , set property 가 존재함 => syntax error 발생 
+            /// public int Age_ErrorVersion { get; set; }
+
+            public void Print()
+            {
+                Console.WriteLine($"Name : {Name}, Age : {Age}");
+            }
+        }
+
+        static void ReadOnlyStructTest()
+        {
+            ReadOnlyStruct person = new ReadOnlyStruct("제이스", 29);
+            person.Print();
+
+            /// 당연히 syntax error 발생 
+            /// person.Age = "15";
+        }
+
+        #endregion
+
+        #region char 문자 타입의 Unicode Category 검사 및 다양한 활용 테스트 
+        /// <summary>
+        /// 표 참고 https://unicode.org/charts/PDF/UAC00.pdf
+        /// </summary>
+        static void UnicodeCharacterAdvanceTest()
+        {
+            string str = "ㅋ012 !@ abc DEF ㄱㄷㄴ 이것은 한글 데스네 ㅗㅜ . \n 호호 HaHa";
+
+            Console.WriteLine($"테스트 문자열 : {str}");
+
+            PadLines();
+
+            foreach (var c in str)
+            {
+                var codeCtg = char.GetUnicodeCategory(c);
+
+                Console.WriteLine("----------");
+
+                Console.WriteLine($"문자 : {c} , unicode : {(int)c} , unicodeCategory : {codeCtg}");
+                switch (codeCtg)
+                {
+                    case System.Globalization.UnicodeCategory.LowercaseLetter:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 소문자 | {codeCtg}");
+                        break;
+                    case System.Globalization.UnicodeCategory.UppercaseLetter:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 대문자 | {codeCtg}");
+                        break;
+
+                    case System.Globalization.UnicodeCategory.SpaceSeparator:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 스페이스 | {codeCtg}");
+                        break;
+                    case System.Globalization.UnicodeCategory.OtherLetter:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 기타 , 속하지 않는 문자 (한글, 한문 etc..) | {codeCtg}");
+                        break;
+                    default:
+                        Console.WriteLine($"UnicodeCateogry 판정 : 기타 | {codeCtg}");
+                        break;
+                }
+
+                /// 한국어인지 체크 
+                if (IsKorean(c))
+                {
+                    Console.WriteLine("한국어 O");
+
+                    /// 한국어면은 완성 글자인지 체크 
+                    if (IsCompletedKoreanLetter(c))
+                    {
+                        Print("완성형");
+                    }
+                    else
+                    {
+                        Print("미완성형");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 한국어인지 체크 
+        /// </summary>
+        static bool IsKorean(char c)
+        {
+            /// 해당 character 를 정수 코드로 변환. 
+            /// (유니코드)
+            var value = (int)c;
+
+            /// 한글의 처음 유니코드 정수값 (표참고)
+            var korean_ucd_from = (int)'ㄱ';
+            /// 한글의 끝 유니코드 정수값 (표참고)
+            var korean_ucd_to = (int)'힣';
+
+            return value >= korean_ucd_from && value <= korean_ucd_to;
+        }
+
+        /// <summary>
+        /// 완성형 한글인지 체크 
+        /// e.g
+        ///     가 -> 완성형 
+        ///     나 -> 완성형 
+        ///     ㄷ -> 미완성형
+        ///     ㄹ -> 미완성형 
+        ///     뻑 -> 완성형
+        ///     ㅏ -> 미완성형
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        static bool IsCompletedKoreanLetter(char c)
+        {
+            /// 해당 character 를 정수 코드로 변환. 
+            /// (유니코드)
+            var value = (int)c;
+
+            /// 한글의 글자 처음 유니코드 정수값 (표참고)
+            var from = (int)'가';
+            /// 한글의 끝 유니코드 정수값 (표참고)
+            var to = (int)'힣';
+
+            return value >= from && value <= to;
+        }
+        #endregion
 
         #region Async & Await 테스트 
         public enum AsyncTestCase
@@ -829,6 +1068,26 @@ namespace ConsoleApp3
 
         #endregion
 
+        #region Linq 테스트 
+        public class LinqTest_Student
+        {
+            public string name;
+            public int score;
+            public int age;
+
+            public LinqTest_Student(string name, int score, int age)
+            {
+                this.name = name;
+                this.score = score;
+                this.age = age;
+            }
+
+            public void Print()
+            {
+                Program.Print($"이름 : {name} , 점수 : {score} , 나이 : {age}");
+            }
+        }
+
         /*
          * Linq 는 편하지만 할당이 많이 일어나 GC 발생률을 증가시키는 함수들이 많음.
          * 고로 런타임 Update 로직에 매 프레임에 무거운 작업을 하게되는것은 최대한 피하면서 
@@ -840,6 +1099,185 @@ namespace ConsoleApp3
          */
         static void LinqUsage()
         {
+            #region Query (orderby, where .. etc)
+            PrintL("Query 키워드 테스트");
+
+            /// 통과 기준 점수 
+            int passThreshold = 60;
+            int[] scores = new int[] { 100, 50, 20, 10, 80, 150, 185, 75, 38 };
+
+            /// 이름,점수,나이 다름 
+            LinqTest_Student[] students_all_diff = new LinqTest_Student[]
+            {
+                new LinqTest_Student("김다라", 20, 15)
+                 , new LinqTest_Student("김세진", 80, 18)
+                 , new LinqTest_Student("이국진", 50,14)
+                 , new LinqTest_Student("창세기", 95,18)
+                 , new LinqTest_Student("김호미", 40,19)
+                 , new LinqTest_Student("김계란", 18,16)
+                 , new LinqTest_Student("김국진", 95, 20)
+                 , new LinqTest_Student("이창렬", 70, 25)
+            };
+
+            /// 이름 동일 / 점수,나이 다름 
+            LinqTest_Student[] students_name_same = new LinqTest_Student[]
+            {
+                new LinqTest_Student("이름", 20, 15)
+                 , new LinqTest_Student("이름", 80, 18)
+                 , new LinqTest_Student("이름", 50,14)
+                 , new LinqTest_Student("이름", 95,18)
+                 , new LinqTest_Student("이름", 40,19)
+                 , new LinqTest_Student("이름", 18,16)
+                 , new LinqTest_Student("이름", 95, 20)
+                 , new LinqTest_Student("이름", 70, 25)
+            };
+
+            /// 이름, 점수 동일 / 나이 다름
+            LinqTest_Student[] students_diff_age = new LinqTest_Student[]
+            {
+                new LinqTest_Student("이름", 100, 15)
+                 , new LinqTest_Student("이름", 100, 18)
+                 , new LinqTest_Student("이름", 100,14)
+                 , new LinqTest_Student("이름", 100,18)
+                 , new LinqTest_Student("이름", 100,19)
+                 , new LinqTest_Student("이름", 100,16)
+                 , new LinqTest_Student("이름", 100, 20)
+                 , new LinqTest_Student("이름", 100, 25)
+            };
+
+            {
+                Print($"통과 기준 점수(score) : {passThreshold} 이상 스코어만 추리기 테스트 ");
+
+                IEnumerable<int> passedScores =
+                    from score in scores
+                    where score >= passThreshold
+                    select score;
+
+                foreach (var s in passedScores)
+                {
+                    Print($"통과한 점수(score) : {s}");
+                }
+            }
+
+            PadLines();
+
+            {
+                int rangeMin = 30;
+                int rangeMax = 60;
+
+                Print($"{rangeMin} 이상이면서 {rangeMax} 이하인 Score 들 추리기 테스트");
+
+                IEnumerable<int> scoresInRange =
+                    from score in scores
+                    where score >= rangeMin && score <= rangeMax
+                    select score;
+
+                foreach (var s in scoresInRange)
+                {
+                    Print($"Score : {s}");
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름으로 오름차순 정렬 테스트 (가나다라 ...)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_all_diff
+                    orderby student.name ascending /// ++ ascending 는 스킵가능. 디폴트 오름차순 . 
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름으로 오름차순 정렬 테스트 (가나다라 ...)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_all_diff
+                    orderby student.name ascending /// ++ ascending 는 스킵가능. 디폴트 오름차순 . 
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름으로 내림차순 정렬 테스트 (가나다라 ...)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_all_diff
+                    orderby student.name descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름 오름차순 정렬 , 이름이 완전히 동일하다면 점수 내림차순 정렬");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_name_same /// 이름이 동일해야 score 정렬 작동.
+                    orderby student.name ascending, student.score descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름 오름차순 , 점수 내림차순 , 나이 내림차순 정렬 . (뭔소리냐면, 학생 이름이 같고 점수가 같다면 나이 내림차순 적용)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_diff_age /// 이름/점수가 동일해야 , 마지막 정렬 우선순위 '나이' 가 적용됨
+                    orderby student.name ascending, student.score descending, student.age descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            PadLines();
+
+            {
+                Print("학생 이름 오름차순 , 점수 내림차순 , 나이 내림차순 정렬 . (뭔소리냐면, 학생 이름이 같고 점수가 같다면 나이 내림차순 적용)");
+
+                IEnumerable<LinqTest_Student> orderByName =
+                    from student in students_diff_age /// 이름/점수가 동일해야 , 마지막 정렬 우선순위 '나이' 가 적용됨
+                    orderby student.name ascending, student.score descending, student.age descending
+                    select student;
+
+                foreach (var s in orderByName)
+                {
+                    s.Print();
+                }
+            }
+
+            #endregion
+
+            PadLines(printSeparator: true);
+
             #region Repeat
             {
                 PrintL("TEST Repeat");
@@ -858,6 +1296,7 @@ namespace ConsoleApp3
             #endregion
 
             PadLines();
+
 
             #region Range
             {
@@ -961,6 +1400,8 @@ namespace ConsoleApp3
 
             PadLines();
         }
+
+        #endregion
 
         // Fix 
         static void TestForeachImplement()
@@ -1433,6 +1874,7 @@ namespace ConsoleApp3
                     int n = 0;
                 }
             }
+
             //System.Int32
             //  Print(type);
 
@@ -1690,6 +2132,102 @@ namespace ConsoleApp3
             //   test.TestDelegate();
         }
 
+        #endregion
+
+        #region WeakReference 테스트 
+        /// <summary>
+        /// TODO 
+        /// </summary>
+        static void WeakReferenceTest()
+        {
+
+        }
+        #endregion
+
+        #region Environment 클래스 Usage 테스트 
+        /// <summary>
+        /// TODO 
+        /// </summary>
+        static void EnvironmentClassUsageTest()
+        {
+            Print($"텍스트1{System.Environment.NewLine}텍스트2{System.Environment.NewLine}텍스트3{System.Environment.NewLine}");
+        }
+        #endregion
+
+        #region Text 핸들링 Usage 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        static void StringTextUsageTest()
+        {
+            #region Split 
+            string[] str = new string[]
+            {
+                "Show me the money,    Crack the Code Right now" , " abc ,,,   ,  "
+            };
+
+            #region 생 Split 
+            Print("======== Split , 파라미터 X =========");
+
+            foreach (var s in str)
+            {
+                var split = s.Split(new char[] { ',' });
+
+                Print($"---- {split} 을 Split ---- ");
+                if (split != null)
+                {
+                    foreach (var s_ in split)
+                    {
+                        Print($"SplitResult : {s_}");
+                    }
+                }
+            }
+            #endregion
+
+            PadLines(2);
+
+            #region 빈 문자열은 제외시키는 옵션 StringSplitOptions.RemoveEmptyEntries 사용
+            Print("======== Split , 파라미터 StringSplitOptions.RemoveEmptyEntires (split 된 결과 string 이 empty 라면 애초에 리턴 값에서 제외됨) =========");
+            /// => 스페이스는 Empty 가 아니기에 제외되지 않음 .
+            /// => 예를 들어 "12,,,ABC 를 콤마( , ) 로 Split 을 하면
+            /// [0] = 1
+            /// [1] = 2
+            /// [2] = 
+            /// ... 이런식인데 여기서 [2] 같은 빈 값을 애초에 return 해주지 않게해주는 옵션. 
+            foreach (var s in str)
+            {
+                var split = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                Print($"---- {split} 을 Split ---- ");
+                if (split != null)
+                {
+                    foreach (var s_ in split)
+                    {
+                        Print($"SplitResult : {s_}");
+                    }
+                }
+            }
+            #endregion
+            #endregion
+
+        }
+        #endregion
+
+        #region Tuple Test
+        static void TupleTest()
+        {
+            var test = new ConsoleApp3.ClassUnitTest.Tuple.TupleTest();
+
+            test.RunTupleTest();
+        }
+        #endregion
+
+        #region Iteration Usage Test
+        static void IterationUsageTest()
+        {
+            var test = new ConsoleApp3.ClassUnitTest.Iteration.IterationTest();
+            test.RunTest();
+        }
         #endregion
     }
 }
