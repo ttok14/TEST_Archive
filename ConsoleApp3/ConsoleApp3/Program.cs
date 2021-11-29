@@ -124,11 +124,12 @@ namespace ConsoleApp3
             //////////////////////////////////////
 
             // 이 밑에서 테스트 진행 
+            WebReqMethodTest();
             //BasicMathOperationSpeedTest();
             //IonicSaveZip();
             //EncryptionDecryptionTest();
             // LinqUsage();
-            InspectProcessAndMemoryInfo();
+            // InspectProcessAndMemoryInfo();
             // ExcelTest();
             // ReflectionTest();
             // RegexTest();
@@ -153,6 +154,32 @@ namespace ConsoleApp3
             // AsyncTest(AsyncTestCase.AsyncTest_GameLogic);
             // AsyncTest(AsyncTestCase.AsyncTest_Loading);
             #endregion
+        }
+
+        /// <summary> Web 에 요청을 보낸후 Response 관련 테스트 </summary>
+        public static void WebReqMethodTest()
+        {
+            var sURL = "https://www.naver.com";
+            WebRequest req = WebRequest.Create(sURL);
+            req.Proxy = WebProxy.GetDefaultProxy();
+
+            Stream objStream;
+            objStream = req.GetResponse().GetResponseStream();
+
+            StreamReader objReader = new StreamReader(objStream);
+
+            string sLine = "";
+            int loopIdx = 0;
+
+            while (sLine != null)
+            {
+                loopIdx++;
+                sLine = objReader.ReadLine();
+                if (sLine != null)
+                    Console.WriteLine("{0}:{1}", loopIdx, sLine);
+            }
+
+            Console.ReadLine();
         }
 
         public static async Task DisplayCurrentInfoAsync()
