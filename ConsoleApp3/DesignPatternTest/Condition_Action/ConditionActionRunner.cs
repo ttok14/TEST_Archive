@@ -100,6 +100,8 @@ class ConditionActionRunner
 
     public void RunTest()
     {
+        Console.WriteLine("---- 조건 / 행동 패턴 Test (이거 내가 맘대로 만든거임. 정식명칭X) ----");
+
         List<ICondition> conditionChain = new List<ICondition>();
         List<IBehaviour> behaviourChain = new List<IBehaviour>();
 
@@ -108,14 +110,23 @@ class ConditionActionRunner
             /// Condition 세팅 
             int srcNumber = 15;
 
+            #region ====:: 조건 (Condition) 세팅 ::====
+
             /// 같고
             conditionChain.Add(ConditionBuilder.NumberConditionBuilder.Build(srcNumber, 15, ConditionBuilder.NumberConditionBuilder.CompareType.Equal));
+
             /// 더 클때 
             conditionChain.Add(ConditionBuilder.NumberConditionBuilder.Build(srcNumber, 5, ConditionBuilder.NumberConditionBuilder.CompareType.Greater));
+
+            #endregion
+
+            #region ====:: 행동 (Behaviour) 세팅 ::====
 
             /// Behaviour 세팅
             behaviourChain.Add(BehaviourBuilder.BuildNumberPrinter(12345));
             behaviourChain.Add(BehaviourBuilder.BuildNumberPrinter(54321));
+
+            #endregion
 
             RunPair(conditionChain, behaviourChain);
         }

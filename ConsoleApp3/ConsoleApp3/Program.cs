@@ -20,6 +20,7 @@ using System.Collections;
 
 /// <summary>
 /// ====== 테스트 목록 =======
+/// <see cref="ConsoleApp3.Program.WebReqMethodTest"/> - Web 에 Request 를 날리고 Response 를 받는거 출력 테스트
 /// <see cref="ConsoleApp3.Program.BasicMathOperationSpeedTest"/> - 연산 속도 테스트
 /// <see cref="ConsoleApp3.Program.IonicSaveZip"/> - ionic 을 이용해서 zip 조작하기
 /// <see cref="ConsoleApp3.Program.EncryptionDecryptionTest"/> - 부호화/복호화 테스트 
@@ -124,14 +125,15 @@ namespace ConsoleApp3
             //////////////////////////////////////
 
             // 이 밑에서 테스트 진행 
-            WebReqMethodTest();
+
+            //WebReqMethodTest();
             //BasicMathOperationSpeedTest();
             //IonicSaveZip();
             //EncryptionDecryptionTest();
             // LinqUsage();
             // InspectProcessAndMemoryInfo();
             // ExcelTest();
-            // ReflectionTest();
+            ReflectionTest();
             // RegexTest();
             // BitOperationTest();
             //CharacterTest();
@@ -1877,35 +1879,10 @@ namespace ConsoleApp3
             //}
         }
 
-        // Fix
         static void ReflectionTest()
         {
-            int intValue = 42;
-
-            Stopwatch watch = new Stopwatch();
-
-            watch.Start();
-
-            while (true)
-            {
-                if (watch.Elapsed.Seconds < 5)
-                {
-                    var type = typeof(string);
-                }
-                else if (watch.Elapsed.Seconds < 10)
-                {
-                    Type type = intValue.GetType();
-                }
-                else
-                {
-                    int n = 0;
-                }
-            }
-
-            //System.Int32
-            //  Print(type);
-
-            ReflectionTest test = new ReflectionTest();
+            var test = new ReflectionTest();
+            test.RunTest();
         }
 
         // Fix
