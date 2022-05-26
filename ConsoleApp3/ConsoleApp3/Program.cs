@@ -44,6 +44,7 @@ using System.Collections;
 /// <see cref="ConsoleApp3.Program.TupleTest"/> - Tuple 활용법 테스트 
 /// <see cref="ConsoleApp3.Program.IterationUsageTest"/> - Iteration 테스트 (ICollection, IList , 등등 ..)
 /// <see cref="ConsoleApp3.Program.InspectProcessAndMemoryInfo"/> - Process 및 Virtual Memory 등 정보 출력 테스트 
+/// <see cref="ConsoleApp3.Program.LazyLoadTest"/> - LazyLoad 테스트 및 활용
 /// </summary>
 namespace ConsoleApp3
 {
@@ -133,7 +134,7 @@ namespace ConsoleApp3
             // LinqUsage();
             // InspectProcessAndMemoryInfo();
             // ExcelTest();
-            ReflectionTest();
+            //ReflectionTest();
             // RegexTest();
             // BitOperationTest();
             //CharacterTest();
@@ -149,6 +150,7 @@ namespace ConsoleApp3
             // StringTextUsageTest();
             //TupleTest();
             // IterationUsageTest();
+            LazyLoadTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -2231,6 +2233,32 @@ namespace ConsoleApp3
         {
             var test = new ConsoleApp3.ClassUnitTest.Iteration.IterationTest();
             test.RunTest();
+        }
+        #endregion
+
+        #region ====:: Lazy Load 테스트 ::====
+        class LazyLoadTestObj
+        {
+            public int number = 50;
+            public string str = "ABC";
+
+            public LazyLoadTestObj()
+            {
+                Console.WriteLine("Assisgned !");
+            }
+        }
+
+        static void LazyLoadTest()
+        {
+            Lazy<LazyLoadTestObj> lazyObj = new Lazy<LazyLoadTestObj>(() => new LazyLoadTestObj());
+
+            Print($"Is Created? : {lazyObj.IsValueCreated}");
+
+            /// 실제 변수에 접근하는 순간 해당 객체의 할당이 이루어짐
+            /// 즉 <see cref="LazyLoadTestObj"/> 의 실제 객체의 메모리 할당이 다음 코드에서 발생
+            Print($"Print Value : {lazyObj.Value.number}");
+
+            Print($"Is Created? : {lazyObj.IsValueCreated}");
         }
         #endregion
     }
