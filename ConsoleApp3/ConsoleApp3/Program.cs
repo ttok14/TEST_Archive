@@ -16,6 +16,12 @@ using ConsoleApp3.ClassUnitTest.LambdaVariableCaptureTest;
 using System.Reflection;
 using System.Threading;
 using System.Collections;
+
+#region ==== Log 출력,저장 등 관련 Package ====
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+#endregion
+
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
 /// <summary>
@@ -45,6 +51,8 @@ using System.Collections;
 /// <see cref="ConsoleApp3.Program.IterationUsageTest"/> - Iteration 테스트 (ICollection, IList , 등등 ..)
 /// <see cref="ConsoleApp3.Program.InspectProcessAndMemoryInfo"/> - Process 및 Virtual Memory 등 정보 출력 테스트 
 /// <see cref="ConsoleApp3.Program.LazyLoadTest"/> - LazyLoad 테스트 및 활용
+/// <see cref="ConsoleApp3.Program.SerilogLogTest"/> - Serilog 를 활용하여 다양한 Log 출력 테스트
+/// <see cref="ConsoleApp3.Program.VariousPathTest"/> - 여러가지 Path 값들 가져오는 방법들 테스트
 /// </summary>
 namespace ConsoleApp3
 {
@@ -150,7 +158,9 @@ namespace ConsoleApp3
             // StringTextUsageTest();
             //TupleTest();
             // IterationUsageTest();
-            LazyLoadTest();
+            // LazyLoadTest();
+            SerilogLogTest();
+            // VariousPathTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -726,6 +736,14 @@ namespace ConsoleApp3
         #endregion
 
         #region Async & Await 테스트 
+        /// <summary>
+        /// ** Method 이름앞에 async 를 붙이는건 해당 Method 안에 await keyword 가 있음을 의미한다. (없으면 Compiler Warning 출력) **
+        /// **await 을 실행할때 Thread 가 추가 생성되는 코드를 작성하게 되면 (e.g. Task) 해당 시점에서 Thread 가 새로 생기게 되어 비동기 코드가 실행된다 **
+        /// ** 비동기 함수의 return type 이 void 가 될 수있지만 해당 방식은 사용하지 않는게 강력하게 권장됨.  (Exception Catch 도 안되고 여러모로 이슈가 많음.)
+        /// ** Task<int> 와 같이  Task 에 Type 을 지정하면 최종적으로 해당 Type 을 반환하는 Task 임을 의미함 ** 
+        /// </summary>
+
+
         public enum AsyncTestCase
         {
             None = 0,
@@ -2261,5 +2279,92 @@ namespace ConsoleApp3
             Print($"Is Created? : {lazyObj.IsValueCreated}");
         }
         #endregion
+
+        #region ====:: Serilog 로 Log 테스트 ::====
+
+        static void SerilogLogTest()
+        {
+            #region === Console 화면에 Log 출력 ===
+            // **!! Serilog.Sinks.Console 패키지가 필요 !!**
+
+            Console.WriteLine("--- Serilog Console Log Test 01 --- \n");
+
+            /// 빌드 패턴을 이용해서 Logger 를 생성
+            Serilog.Log.Logger = new LoggerConfiguration()
+                // 어디에 Write 을 할지 지정함 ( Console, DebuggingOutput, File etc.. ) . 
+                // 여기서 Console 에 출력하기 위해 Console 로 지정. 테마는 자유롭게 선택 가능
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                // logger 생성 
+                .CreateLogger();
+
+            // 콘솔창에 로그들 출력 
+            Serilog.Log.Information("Information");
+            Serilog.Log.Fatal("Fatal!");
+            Serilog.Log.Error("Error");
+            Serilog.Log.Warning("Warning");
+
+            // Debug 는 별도로 설정해줘야 출력됨. 즉 이 라인에서의 log 는 무시됨
+            Serilog.Log.Debug("Debug - 01");
+
+            Console.WriteLine();
+
+            // Logger 인스턴스 교체 
+            Serilog.Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                // Log 별로 Level 이 있는데 Debug 보이게 수정 .
+                // Information 을 무시하고싶다하면 Information 보다 높은 레벨을 설정하면됨. 
+                //      e.g. MinimumLevel.Warning()
+                .MinimumLevel.Debug()
+                // logger 생성 
+                .CreateLogger();
+
+            // 여기서는 위에서 설정했기에 보임
+            Serilog.Log.Debug("Debug - 02");
+
+            #endregion
+
+            #region === Debug 모드일때 Output 창에 로그 출력 ===
+            // **!! Serilog.Sinks.Debug 패키지가 필요 !!**
+
+            Serilog.Log.Logger = new LoggerConfiguration()
+                // Debug 창에 출력 
+                //      => Visual Studio 에서는 F5 누르고 디버깅모드 들어가서 Output 확인하면 메시지 확인 가능 
+                .WriteTo.Debug()
+                .CreateLogger();
+
+            Serilog.Log.Information("Information");
+
+            #endregion
+
+            #region === File 에 Write 하기 ===
+            // **!! Serilog.Sinks.File 패키지가 필요 !!**
+
+            string fileLogName = $"SerilogTestFile_{DateTime.Now.ToString("yyyy-mm-dd-hh-mm")}.txt";
+
+            Serilog.Log.Logger = new LoggerConfiguration()
+                // Debug 창에 출력 
+                //      => Visual Studio 에서는 F5 누르고 디버깅모드 들어가서 Output 확인하면 메시지 확인 가능 
+                .WriteTo.File(fileLogName)
+                .CreateLogger();
+
+            // Output Folder 바로 Open 하기
+            //      => e.g. D:\UnityProject\TEST_Archive\ConsoleApp3\ConsoleApp3\bin\Debug
+            var outputDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Process.Start("explorer", outputDirectory);
+
+            Serilog.Log.Information("Information - This will be written on the file");
+
+            #endregion
+        }
+
+        /// <summary>
+        /// TODO - 
+        /// </summary>
+        static void VariousPathTest()
+        {
+
+        }
     }
+
+    #endregion
 }
