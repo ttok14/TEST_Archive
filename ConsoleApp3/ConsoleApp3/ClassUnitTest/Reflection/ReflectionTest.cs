@@ -40,7 +40,7 @@ namespace ConsoleApp3
 
     class ReflectionTest
     {
-        public void RunTest()
+        public void InspectClassInfo()
         {
             #region ====:: 클래스 정보 탈탈 털기 ::====
 
@@ -49,10 +49,14 @@ namespace ConsoleApp3
             #endregion
 
             Console.WriteLine();
+        }
+
+        public void MethodCallTest()
+        {
+            #region ====:: 메서드 호출하기 ::====
+
             Console.WriteLine("========== 메서드 호출하기 ===============================");
             Console.WriteLine();
-
-            #region ====:: 메서드 호출하기 ::====
 
             CallMethodByName(new MyTestClassSub(), typeof(MyTestClassSub), $"{nameof(MyTestClassSub.MyPrintMethodWithParams)}");
 
@@ -61,8 +65,129 @@ namespace ConsoleApp3
             CallMethodByName(null, typeof(MyTestClassSub), $"{nameof(MyTestClassSub.ThisIsStaticMethod)}");
 
             #endregion
+        }
 
+        /// <summary> 
+        /// Assembly 란 ? [https://stackoverflow.com/questions/1362242/what-exactly-is-an-assembly-in-c-sharp-or-net] , [https://docs.microsoft.com/en-us/dotnet/standard/assembly/]
+        ///     - Assembly 란 C# 보다는 .Net 의 개념임. (C# 은 .Net 을 기반으로 하는 프로그래밍 언어이며 .Net 의 Specification 들을 구현하기에 C# 의 기반이 .Net 이라함)
+        ///     - Assembly 의 형태는 .exe 또는 .dll 
+        ///     - Source Code 의 Compile 된 Output 형태
+        ///     - Assembly 는 배포(Deployment) 의 가장 최소 단위임
+        ///     - Assembly 는 전형적으로 MSIL (Microsoft Intermediate language) 로 이루어져 있음 
+        ///         - 해당 MSIL 은 .Net Runtime 에 의해 실행 가능 . 
+        ///     - Assembly 은 Type , Class 을 포함 
+        ///     - Assembly A 에서 B 를 Load (주로 Binding 이라 부름) 하는 시점은 , B 의 Type 을 실제로 사용하는 시점임. 
+        ///             - 해당 시점에 CLR (Common Language Runtime) 이 Output Folder 에 .config 을 찾아서 거기에 기술된 Assembly 리스트를
+        ///                 기준으로 Version 정보를 가져와서 해당 Path 에서 Load 시도 
+        ///     - Assembly 가 Binding 되는 시점은 Runtime 이다. Runtime 에 StartUp Project 가 Load 되고 다른 Assembly 를 참조하는 시점 , 
+        ///                 즉 다른 Assembly 에 포함된 Type 을 사용하는 시점이 실제로 해당 Assembly 를 Binding 시도하는 시점임 .
+        ///     - Global Assembly Cache (GAC) 는 여러 Application 들이 Share 할 수 있는 Assembly 들이 위치한 곳임 . 
+        /// </summary>
+        public void AssemblyTest()
+        {
+            #region ====:: Assembly 클래스 테스트 ::====
+
+            Console.WriteLine("========== Assembly 클래스 테스트 ===================");
             Console.WriteLine();
+
+            Console.WriteLine("=== 현재 실행중인 Assembly 관련 테스트 ===");
+            // 현 Assembly 가져옴 
+            var curAssembly = Assembly.GetExecutingAssembly();
+            // 이름 정보 가져옴 
+            var curAssemblyNameInfo = curAssembly.GetName();
+
+            Console.WriteLine($"This Assembly Name : {curAssemblyNameInfo.Name}");
+            Console.WriteLine($"Is Loaded From Global Assembly Cache (GAC) : {curAssembly.GlobalAssemblyCache}");
+
+            Console.WriteLine("=====\n");
+
+            Console.WriteLine($"== Assembly 의 DefinedTypes ==");
+
+            // 해당 Assembly 에서 Define 된 Type 들을 전부 출력
+            //      => i.e 람다로 인한 anonymous class 같은 경우도 Compiler 가 Compile 시 Class 로 만들기 때문에 (대체로 DisplayClass 라 불림)
+            //              출력해보면 전부 다 출력되는걸 알 수 있음 . (e.g. ConsoleApp3.Program+<>c__DisplayClass37_0)
+            foreach (var definedType in curAssembly.DefinedTypes)
+            {
+                Console.WriteLine($"Following Type : [ {definedType.FullName} ] has been defined");
+            }
+
+            Console.WriteLine("=====\n");
+
+            // 
+            Console.WriteLine($"EntryPoint : {curAssembly.EntryPoint.Name}");
+
+            Console.WriteLine("=====\n");
+
+            Console.WriteLine($"== Exported Types ==");
+            foreach (var type in curAssembly.ExportedTypes)
+            {
+                Console.WriteLine(type.Name);
+            }
+
+            Console.WriteLine("=====\n");
+
+            Console.WriteLine($"This assembly ImageRuntimeVersion : { curAssembly.ImageRuntimeVersion}");
+            Console.WriteLine($"This assembly Location : {curAssembly.Location}");
+
+            Console.WriteLine("=====\n");
+
+            Console.WriteLine($"IsDynamic Assembly : {curAssembly.IsDynamic}");
+
+            Console.WriteLine("=====\n");
+
+            var files = curAssembly.GetFiles();
+
+            foreach (var file in files)
+            {
+                Console.WriteLine($"Assembly File : {file.Name}");
+            }
+
+            var assemName = curAssembly.FullName;
+            Console.WriteLine("aa:" + assemName);
+
+            Console.WriteLine("=========");
+            var assembliesReferencedByThis = curAssembly.GetReferencedAssemblies();
+
+            // Current Assembly 가 참조하는 다른 Assembly 들 출력
+            foreach (var assembly in assembliesReferencedByThis)
+            {
+                Console.WriteLine($"Assembly Referenced By {curAssembly.FullName} : {assembly.Name}");
+            }
+
+            Console.WriteLine("=========\n");
+
+            var typesThisAssemblyContains = curAssembly.GetTypes();
+
+            // 현재 Assembly 가 가지고 있는 모든 Type 들 출력
+            foreach (var type in typesThisAssemblyContains)
+            {
+                Console.WriteLine($"Type that this Assembly contains : {type.Name}");
+            }
+
+            Console.WriteLine("========\n");
+
+            Console.WriteLine($"===== Manually Load and Check GAC =======");
+
+            foreach (var assemblyName in curAssembly.GetReferencedAssemblies())
+            {
+                try
+                {
+                    // Assembly 를 Manual 하게 Load 하기 
+                    //      => CLR 이 Assembly 찾는 Directory 기준은 현재 Project 의 Output Folder (e.g. xx/bin/Debug/ ). 
+                    //                    해당 Directory 는 Directory.GetCurrentDirectory() 로 가져올수있음 . 
+                    //      => e.g. 파라미터로 "ConsoleApp3" 만 적는경우 해당 Project 의 Bin/Debug(또는 Release) Directory 상에서 Search 함 
+                    var loadedAssembly = Assembly.Load(assemblyName.Name);
+                    Console.WriteLine($"Assembly Loaded Manually : {loadedAssembly.GetName()} , Is GAC : {loadedAssembly.GlobalAssemblyCache}");
+                }
+                catch (Exception exp)
+                {
+                    Console.WriteLine($"Assembly Load Manually Failed : {assemblyName.Name}");
+                }
+            }
+
+            Console.WriteLine("============\n");
+
+            #endregion
         }
 
         /// <summary>

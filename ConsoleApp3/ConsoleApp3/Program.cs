@@ -142,7 +142,7 @@ namespace ConsoleApp3
             // LinqUsage();
             // InspectProcessAndMemoryInfo();
             // ExcelTest();
-            //ReflectionTest();
+            ReflectionTest();
             // RegexTest();
             // BitOperationTest();
             //CharacterTest();
@@ -159,7 +159,7 @@ namespace ConsoleApp3
             //TupleTest();
             // IterationUsageTest();
             // LazyLoadTest();
-            SerilogLogTest();
+            // SerilogLogTest();
             // VariousPathTest();
 
             #region Async 테스트 (Case 별)
@@ -1902,7 +1902,9 @@ namespace ConsoleApp3
         static void ReflectionTest()
         {
             var test = new ReflectionTest();
-            test.RunTest();
+            //        test.InspectClassInfo();
+            //           test.MethodCallTest();
+            test.AssemblyTest();
         }
 
         // Fix
@@ -2285,7 +2287,7 @@ namespace ConsoleApp3
         static void SerilogLogTest()
         {
             #region === Console 화면에 Log 출력 ===
-            // **!! Serilog.Sinks.Console 패키지가 필요 !!**
+            // **!! Serilog.Sinks.Console 패키지가 필요 (NuGet 에서 설치 가능) !!**
 
             Console.WriteLine("--- Serilog Console Log Test 01 --- \n");
 
@@ -2324,7 +2326,7 @@ namespace ConsoleApp3
             #endregion
 
             #region === Debug 모드일때 Output 창에 로그 출력 ===
-            // **!! Serilog.Sinks.Debug 패키지가 필요 !!**
+            // **!! Serilog.Sinks.Debug 패키지가 필요 (NuGet 에서 설치 가능) !!**
 
             Serilog.Log.Logger = new LoggerConfiguration()
                 // Debug 창에 출력 
@@ -2337,7 +2339,7 @@ namespace ConsoleApp3
             #endregion
 
             #region === File 에 Write 하기 ===
-            // **!! Serilog.Sinks.File 패키지가 필요 !!**
+            // **!! Serilog.Sinks.File 패키지가 필요 (NuGet 에서 설치 가능) !!**
 
             string fileLogName = $"SerilogTestFile_{DateTime.Now.ToString("yyyy-mm-dd-hh-mm")}.txt";
 
