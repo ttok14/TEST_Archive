@@ -1902,9 +1902,11 @@ namespace ConsoleApp3
         static void ReflectionTest()
         {
             var test = new ReflectionTest();
-            //        test.InspectClassInfo();
-            //           test.MethodCallTest();
-            test.AssemblyTest();
+
+            // test.InspectClassInfo();
+            // test.MethodCallTest();
+            // test.AssemblyTest();
+            test.ActivatorTest();
         }
 
         // Fix

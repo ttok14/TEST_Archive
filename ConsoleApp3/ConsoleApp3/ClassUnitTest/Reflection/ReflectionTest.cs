@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
 
 namespace ConsoleApp3
 {
     /// <summary> 부모 클래스를 나타내기 위한 클래스 </summary>
-    abstract class MyTestClassRoot
-    {
-
-    }
+    abstract class MyTestClassRoot { }
 
     /// <summary> 자식 클래스 </summary>
     class MyTestClassSub : MyTestClassRoot
@@ -82,6 +76,7 @@ namespace ConsoleApp3
         ///     - Assembly 가 Binding 되는 시점은 Runtime 이다. Runtime 에 StartUp Project 가 Load 되고 다른 Assembly 를 참조하는 시점 , 
         ///                 즉 다른 Assembly 에 포함된 Type 을 사용하는 시점이 실제로 해당 Assembly 를 Binding 시도하는 시점임 .
         ///     - Global Assembly Cache (GAC) 는 여러 Application 들이 Share 할 수 있는 Assembly 들이 위치한 곳임 . 
+        ///     - Assembly 는 Moudle 을 포함하고 Module 은 Class, Type 등을 포함하는 구조
         /// </summary>
         public void AssemblyTest()
         {
@@ -89,6 +84,12 @@ namespace ConsoleApp3
 
             Console.WriteLine("========== Assembly 클래스 테스트 ===================");
             Console.WriteLine();
+
+            Console.WriteLine($"EntryAssembly : {Assembly.GetEntryAssembly().FullName}");
+
+            Console.WriteLine($"EntryAssembly CodeBase : {Assembly.GetEntryAssembly().CodeBase}");
+
+            Console.WriteLine($"=======\n");
 
             Console.WriteLine("=== 현재 실행중인 Assembly 관련 테스트 ===");
             // 현 Assembly 가져옴 
@@ -122,6 +123,15 @@ namespace ConsoleApp3
             foreach (var type in curAssembly.ExportedTypes)
             {
                 Console.WriteLine(type.Name);
+            }
+
+            Console.WriteLine("=====\n");
+
+            var modules = curAssembly.GetModules();
+
+            foreach (var module in modules)
+            {
+                Console.WriteLine($"Module Name : {module.Name}");
             }
 
             Console.WriteLine("=====\n");
@@ -168,6 +178,7 @@ namespace ConsoleApp3
 
             Console.WriteLine($"===== Manually Load and Check GAC =======");
 
+            // 현재 Assembly 가 Reference 하는 Assembly 순회
             foreach (var assemblyName in curAssembly.GetReferencedAssemblies())
             {
                 try
@@ -316,6 +327,64 @@ namespace ConsoleApp3
             }
 
             method.Invoke(targetInstance, parameters);
+        }
+
+        public void ActivatorTest()
+        {
+            #region ====:: Activator.CreateInstance ::====
+
+            // Activator.CreateInstance() 로 StringBuilder 인스턴스 생성하기 
+            Object o = Activator.CreateInstance(typeof(StringBuilder));
+
+            var sb = (StringBuilder)o;
+            sb.Append("This is jayce coming over!!!!!!!!");
+
+            Console.WriteLine(sb.ToString());
+
+            Console.WriteLine("=====\n");
+
+            // Remote 로 생성하기 
+            System.Runtime.Remoting.ObjectHandle oh =
+                Activator.CreateInstanceFrom(Assembly.GetEntryAssembly().CodeBase,
+                typeof(SomeType).FullName);
+
+            var st = (SomeType)oh.Unwrap();
+
+            st.DoSomething(5);
+
+            Console.WriteLine("=====\n");
+
+            var curAssembly = Assembly.GetExecutingAssembly();
+
+            // 현재 Assembly 의 모든 Type 들 순회 
+            foreach (var type in curAssembly.GetTypes())
+            {
+                // 기본 생성자로 인스턴스 생성 가능한애인지 체크
+                bool isUnableToCreateWithEmptyConstructor =
+                    type.IsNotPublic
+                    || type.IsAbstract
+                    || type.IsGenericType
+                    || (type.IsValueType == false && type.GetConstructor(Type.EmptyTypes) == null);
+
+                if (isUnableToCreateWithEmptyConstructor)
+                {
+                    continue;
+                }
+
+                Object obj = Activator.CreateInstance(type);
+
+                Console.WriteLine($"Instance of {type.ToString()} has been created");
+            }
+
+            #endregion
+        }
+
+        public class SomeType
+        {
+            public void DoSomething(int x)
+            {
+                Console.WriteLine($"100 / {0} = {1}", x, 100 / x);
+            }
         }
     }
 }
