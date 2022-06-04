@@ -22,6 +22,9 @@ using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 #endregion
 
+using static System.Console;
+using System.Runtime.CompilerServices;
+
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
 /// <summary>
@@ -54,6 +57,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 /// <see cref="ConsoleApp3.Program.SerilogLogTest"/> - Serilog 를 활용하여 다양한 Log 출력 테스트
 /// <see cref="ConsoleApp3.Program.VariousPathTest"/> - 여러가지 Path 값들 가져오는 방법들 테스트
 /// <see cref="ConsoleApp3.Program.SyntaxTreeTest"> - C# SyntaxTree 테스트 
+/// <see cref="ConsoleApp3.Program.PortableExecutableTest"/> - PortableExecutable 테스트
 /// </summary>
 namespace ConsoleApp3
 {
@@ -162,7 +166,8 @@ namespace ConsoleApp3
             // LazyLoadTest();
             // SerilogLogTest();
             // VariousPathTest();
-            SyntaxTreeTest();
+            // SyntaxTreeTest();
+            PortableExecutableTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -2368,7 +2373,25 @@ namespace ConsoleApp3
         /// </summary>
         static void VariousPathTest()
         {
+            // 아직 작업중. 일단 아카이브용으로 Rough 하게 기록함 . 추후 정리
 
+            // This will get the current WORKING directory (i.e. \bin\Debug)
+            string workingDirectory = Environment.CurrentDirectory;
+            // or: Directory.GetCurrentDirectory() gives the same result
+
+            // This will get the current PROJECT bin directory (ie ../bin/)
+            string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
+
+            // This will get the current PROJECT directory
+            string projectDirectory2 = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+            WriteLine(workingDirectory);
+            WriteLine(projectDirectory);
+            WriteLine(projectDirectory2);
+
+            // 현재 .cs SourceCode File 이 위치한 Directory 가져옴
+            var path = ProjectUtility.GetCallerFilePath();
+            var curCsLocation = Path.GetDirectoryName(path);
         }
 
         /// <summary>
@@ -2379,6 +2402,12 @@ namespace ConsoleApp3
         {
             var test = new ConsoleApp3.ClassUnitTest.Analysis.SyntaxAnalysis();
             test.RunTest();
+        }
+
+        static void PortableExecutableTest()
+        {
+            var test = new ConsoleApp3.ClassUnitTest.Analysis.PortableExecutableTest();
+            test.CompileAndSavePortableExecutableTest();
         }
     }
 

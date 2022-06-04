@@ -8,6 +8,7 @@ using System.Net;
 using Ionic.Zip;
 using Ionic.Crc;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.CompilerServices;
 
 namespace ConsoleApp3
 {
@@ -83,6 +84,12 @@ namespace ConsoleApp3
                 }
             }
             return new string(buffer);
+        }
+
+        // 해당 함수를 호출한 File 의 Path 를 가져옴
+        public static string GetCallerFilePath([CallerFilePath] string path = null)
+        {
+            return path;
         }
     }
 }

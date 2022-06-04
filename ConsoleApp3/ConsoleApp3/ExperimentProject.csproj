@@ -100,6 +100,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassUnitTest\Analysis\PortableExecutableTest.cs" />
     <Compile Include="ClassUnitTest\Analysis\SyntaxAnalysis.cs" />
     <Compile Include="ClassUnitTest\ExcelTest\ExcelTestClass.cs" />
     <Compile Include="ClassUnitTest\Iteration\IterationTest.cs" />
