@@ -32,7 +32,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 /// <see cref="ConsoleApp3.Program.EncryptionDecryptionTest"/> - 부호화/복호화 테스트 
 /// <see cref="ConsoleApp3.Program.LinqUsage"/> - Linq 클래스 활용 테스트 
 /// <see cref="ConsoleApp3.Program.ExcelTest"/> - 엑셀 조작 테스트 
-/// <see cref="ConsoleApp3.Program.ReflectionTest"/> - Reflection 테스트 
+/// <see cref="ConsoleApp3.Program.ReflectionTest"/> - Reflection 테스트 ( Reflection , Assembly 등.. ) 
 /// <see cref="ConsoleApp3.Program.RegexTest"/> - 정규식 (Regular Expression) 테스트 
 /// <see cref="ConsoleApp3.Program.BitOperationTest"/> - 비트 연산 테스트
 /// <see cref="ConsoleApp3.Program.CharacterTest"/> - 문자 테스트 , 아스키코드/유니코드 etc
@@ -53,6 +53,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 /// <see cref="ConsoleApp3.Program.LazyLoadTest"/> - LazyLoad 테스트 및 활용
 /// <see cref="ConsoleApp3.Program.SerilogLogTest"/> - Serilog 를 활용하여 다양한 Log 출력 테스트
 /// <see cref="ConsoleApp3.Program.VariousPathTest"/> - 여러가지 Path 값들 가져오는 방법들 테스트
+/// <see cref="ConsoleApp3.Program.SyntaxTreeTest"> - C# SyntaxTree 테스트 
 /// </summary>
 namespace ConsoleApp3
 {
@@ -135,32 +136,33 @@ namespace ConsoleApp3
 
             // 이 밑에서 테스트 진행 
 
-            //WebReqMethodTest();
-            //BasicMathOperationSpeedTest();
-            //IonicSaveZip();
-            //EncryptionDecryptionTest();
+            // WebReqMethodTest();
+            // BasicMathOperationSpeedTest();
+            // IonicSaveZip();
+            // EncryptionDecryptionTest();
             // LinqUsage();
             // InspectProcessAndMemoryInfo();
             // ExcelTest();
-            ReflectionTest();
+            // ReflectionTest();
             // RegexTest();
             // BitOperationTest();
-            //CharacterTest();
-            //SortTest();
+            // CharacterTest();
+            // SortTest();
             // ConvarianceTest();
             // DateTime_TimeSpanTest();
-            //LambdaVariableCaptureTest();
-            //BatchFileUsageTest();
-            //ReadOnlyStructTest();
-            //UnicodeCharacterAdvanceTest();
+            // LambdaVariableCaptureTest();
+            // BatchFileUsageTest();
+            // ReadOnlyStructTest();
+            // UnicodeCharacterAdvanceTest();
             // WeakReferenceTest();
             // EnvironmentClassUsageTest();
             // StringTextUsageTest();
-            //TupleTest();
+            // TupleTest();
             // IterationUsageTest();
             // LazyLoadTest();
             // SerilogLogTest();
             // VariousPathTest();
+            SyntaxTreeTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -2367,6 +2369,16 @@ namespace ConsoleApp3
         static void VariousPathTest()
         {
 
+        }
+
+        /// <summary>
+        /// <see cref="Microsoft.CodeAnalysis.SyntaxTree"/>, <see cref="Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree"/> 를 이용해서 
+        /// C# Source Code 를 SyntaxTree 화시키고 어떤식으로 활용 가능한지 테스트
+        /// </summary>
+        static void SyntaxTreeTest()
+        {
+            var test = new ConsoleApp3.ClassUnitTest.Analysis.SyntaxAnalysis();
+            test.RunTest();
         }
     }
 
