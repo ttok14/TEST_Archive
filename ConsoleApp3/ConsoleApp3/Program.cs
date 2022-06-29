@@ -58,6 +58,7 @@ using System.Runtime.CompilerServices;
 /// <see cref="ConsoleApp3.Program.VariousPathTest"/> - 여러가지 Path 값들 가져오는 방법들 테스트
 /// <see cref="ConsoleApp3.Program.SyntaxTreeTest"> - C# SyntaxTree 테스트 
 /// <see cref="ConsoleApp3.Program.PortableExecutableTest"/> - PortableExecutable 테스트
+/// <see cref="ConsoleApp3.Program.EnumerateDirectoryRecursivelyTest"/>
 /// </summary>
 namespace ConsoleApp3
 {
@@ -167,7 +168,8 @@ namespace ConsoleApp3
             // SerilogLogTest();
             // VariousPathTest();
             // SyntaxTreeTest();
-            PortableExecutableTest();
+            // PortableExecutableTest();
+            EnumerateDirectoryRecursivelyTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -2407,7 +2409,47 @@ namespace ConsoleApp3
         static void PortableExecutableTest()
         {
             var test = new ConsoleApp3.ClassUnitTest.Analysis.PortableExecutableTest();
-            test.CompileAndSavePortableExecutableTest();
+            /// test.CompileAndSavePortableExecutableTest();
+        }
+
+        // 하위 Directory 까지 전부 Search 및 특정 extension 의 File 찾기 
+        static void EnumerateDirectoryRecursivelyTest()
+        {
+            // 해당 root directory 부터 그 하위 모든 Sub Directory 들 Recursively 하게 순회돌면서 Direcotry 가져옴 
+            List<string> GetAllDirs(string root)
+            {
+                var list = new List<string>();
+                Search(list, root);
+                return list;
+            }
+
+            void Search(List<string> list, string dir)
+            {
+                var resultDirs = Directory.GetDirectories(dir);
+                list.AddRange(resultDirs);
+
+                foreach (var t in resultDirs)
+                {
+                    Search(list, t);
+                }
+            }
+
+            // 해당 Directory 포함, 그 하위 모든 Directory 들 가져옴 
+            var dirs = GetAllDirs($@"{Directory.GetCurrentDirectory()}\..\..\..");
+            StringBuilder builder = new StringBuilder();
+
+            foreach (var dir in dirs)
+            {
+                // .cs 파일 검색
+                var files = Directory.EnumerateFiles(dir, "*.cs");
+
+                foreach (var file in files)
+                {
+                    builder.AppendLine($".cs Found : {file}");
+                }
+            }
+
+            Console.WriteLine(builder.ToString());
         }
     }
 
