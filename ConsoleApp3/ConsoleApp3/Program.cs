@@ -58,7 +58,8 @@ using System.Runtime.CompilerServices;
 /// <see cref="ConsoleApp3.Program.VariousPathTest"/> - 여러가지 Path 값들 가져오는 방법들 테스트
 /// <see cref="ConsoleApp3.Program.SyntaxTreeTest"> - C# SyntaxTree 테스트 
 /// <see cref="ConsoleApp3.Program.PortableExecutableTest"/> - PortableExecutable 테스트
-/// <see cref="ConsoleApp3.Program.EnumerateDirectoryRecursivelyTest"/>
+/// <see cref="ConsoleApp3.Program.EnumerateDirectoryRecursivelyTest"/> 파일 디렉터리를 Recuesively 탐색 테스트 
+/// <see cref="ConsoleApp3.Program.MultithreadingTest"/> 멀티쓰레딩 관련 테스트
 /// </summary>
 namespace ConsoleApp3
 {
@@ -169,7 +170,8 @@ namespace ConsoleApp3
             // VariousPathTest();
             // SyntaxTreeTest();
             // PortableExecutableTest();
-            EnumerateDirectoryRecursivelyTest();
+            // EnumerateDirectoryRecursivelyTest();
+            MultithreadingTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -2370,6 +2372,8 @@ namespace ConsoleApp3
             #endregion
         }
 
+        #region ===:: Path 조작 관련 테스트 ::===
+
         /// <summary>
         /// TODO - 
         /// </summary>
@@ -2396,6 +2400,10 @@ namespace ConsoleApp3
             var curCsLocation = Path.GetDirectoryName(path);
         }
 
+        #endregion
+
+        #region ===:: Syntax Tree 관련 테스트 ::===
+
         /// <summary>
         /// <see cref="Microsoft.CodeAnalysis.SyntaxTree"/>, <see cref="Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree"/> 를 이용해서 
         /// C# Source Code 를 SyntaxTree 화시키고 어떤식으로 활용 가능한지 테스트
@@ -2406,11 +2414,19 @@ namespace ConsoleApp3
             test.RunTest();
         }
 
+        #endregion
+
+        #region ===:: PortableExecutable (PE) 관련 테스트 ===:: 
+
         static void PortableExecutableTest()
         {
             var test = new ConsoleApp3.ClassUnitTest.Analysis.PortableExecutableTest();
             /// test.CompileAndSavePortableExecutableTest();
         }
+
+        #endregion
+
+        #region ===:: 디렉터리를 순회하며 모든 .cs 뒤지기 ::===
 
         // 하위 Directory 까지 전부 Search 및 특정 extension 의 File 찾기 
         static void EnumerateDirectoryRecursivelyTest()
@@ -2451,6 +2467,18 @@ namespace ConsoleApp3
 
             Console.WriteLine(builder.ToString());
         }
+
+        #endregion
+
+        #region ===:: 멀티쓰레딩 (Multithreading) 관련 테스트 ::===
+
+        static void MultithreadingTest()
+        {
+            var target = new MultithreadingTest();
+            target.RunTest();
+        }
+
+        #endregion
     }
 
     #endregion
