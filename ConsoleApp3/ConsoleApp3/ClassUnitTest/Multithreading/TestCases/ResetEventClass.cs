@@ -10,7 +10,7 @@ namespace ConsoleApp3
     /// <summary>
     /// <see cref="ManualResetEvent"/> , <see cref="AutoResetEvent"/>
     /// 위 클래스는 Thread 들을 특정 위치에서 대기시키거나 통과시키게 할 수 있음.
-    /// 이에 대해 테스트 진행
+    /// 여기서는 <see cref="ManualResetEvent"/> 클래스 테스트 진행
     /// </summary>
     class ResetEventClass
     {
@@ -77,16 +77,18 @@ namespace ConsoleApp3
             // 참고로 반환 타입이 bool 이며 , 신호받지 않는 상태면 반환하지 않고 그대로 블록.
             mre.WaitOne();
 
+            Console.WriteLine(i_param + " , " + shared_variable);
+
             if (i_param == waitAt)
             {
+                Console.WriteLine($"i_param Reached {waitAt} So Resetting the signal ! (means Threads will block at 'mre.WaitOne()' until the execution of 'mre.Set()')");
+
                 // Reset() 함수는 신호를 리셋 , 즉 
                 // 신호등으로 치면 초록 -> 빨간 불로 변함 . 
                 // 즉 , 신호 없음 상태가 되기 때문에 이제부터 mre.WaitOne() 함수를 만나는 
                 // Thread 들은 Block 상태가 될것임. 
                 mre.Reset();
             }
-
-            Console.WriteLine(i_param + " , " + shared_variable);
         }
     }
 }

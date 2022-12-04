@@ -106,6 +106,7 @@
     <Compile Include="ClassUnitTest\Iteration\IterationTest.cs" />
     <Compile Include="ClassUnitTest\LambdaVariableCaptureTest\LambdaVariableCaptureClass.cs" />
     <Compile Include="ClassUnitTest\Multithreading\MultithreadingTest.cs" />
+    <Compile Include="ClassUnitTest\Multithreading\TestCases\AutoEventClass.cs" />
     <Compile Include="ClassUnitTest\Multithreading\TestCases\ResetEventClass.cs" />
     <Compile Include="ClassUnitTest\Reflection\ReflectionTest.cs" />
     <Compile Include="ClassUnitTest\AttributeTest\AttributeTestClass.cs" />
