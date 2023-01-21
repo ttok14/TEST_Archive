@@ -36,6 +36,7 @@ using System.Runtime.CompilerServices;
 /// <see cref="ConsoleApp3.Program.LinqUsage"/> - Linq 클래스 활용 테스트 
 /// <see cref="ConsoleApp3.Program.ExcelTest"/> - 엑셀 조작 테스트 
 /// <see cref="ConsoleApp3.Program.ReflectionTest"/> - Reflection 테스트 ( Reflection , Assembly 등.. ) 
+///     - <see cref="ConsoleApp3.Program.AttributeTest"/> Attribute 테스트 ( Reflection 하위 )
 /// <see cref="ConsoleApp3.Program.RegexTest"/> - 정규식 (Regular Expression) 테스트 
 /// <see cref="ConsoleApp3.Program.BitOperationTest"/> - 비트 연산 테스트
 /// <see cref="ConsoleApp3.Program.CharacterTest"/> - 문자 테스트 , 아스키코드/유니코드 etc
@@ -150,6 +151,8 @@ namespace ConsoleApp3
             // InspectProcessAndMemoryInfo();
             // ExcelTest();
             // ReflectionTest();
+            AttributeTest();
+            // AttributeTest();
             // RegexTest();
             // BitOperationTest();
             // CharacterTest();
@@ -171,7 +174,7 @@ namespace ConsoleApp3
             // SyntaxTreeTest();
             // PortableExecutableTest();
             // EnumerateDirectoryRecursivelyTest();
-            MultithreadingTest();
+            // MultithreadingTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -1918,6 +1921,13 @@ namespace ConsoleApp3
             // test.MethodCallTest();
             // test.AssemblyTest();
             test.ActivatorTest();
+        }
+
+        static void AttributeTest()
+        {
+            var test = new AttributeTest.AttributeTest();
+
+            test.RunTest();
         }
 
         // Fix
