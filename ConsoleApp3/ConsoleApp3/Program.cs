@@ -61,6 +61,7 @@ using System.Runtime.CompilerServices;
 /// <see cref="ConsoleApp3.Program.PortableExecutableTest"/> - PortableExecutable 테스트
 /// <see cref="ConsoleApp3.Program.EnumerateDirectoryRecursivelyTest"/> 파일 디렉터리를 Recuesively 탐색 테스트 
 /// <see cref="ConsoleApp3.Program.MultithreadingTest"/> 멀티쓰레딩 관련 테스트
+/// <see cref="ConsoleApp3.Program.FSMTest"/> Character 의 Behaviour 을 FSM 화 테스트 
 /// </summary>
 namespace ConsoleApp3
 {
@@ -151,7 +152,7 @@ namespace ConsoleApp3
             // InspectProcessAndMemoryInfo();
             // ExcelTest();
             // ReflectionTest();
-            AttributeTest();
+            // AttributeTest();
             // AttributeTest();
             // RegexTest();
             // BitOperationTest();
@@ -175,6 +176,7 @@ namespace ConsoleApp3
             // PortableExecutableTest();
             // EnumerateDirectoryRecursivelyTest();
             // MultithreadingTest();
+            FSMTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -2486,6 +2488,16 @@ namespace ConsoleApp3
         {
             var target = new MultithreadingTest();
             target.RunTest();
+        }
+
+        #endregion
+
+        #region ====:: Character FSM 화 테스트 ::====
+
+        static void FSMTest()
+        {
+            var fsm = new ConsoleApp3.ClassUnitTest.FSM.FSMTest();
+            fsm.RunTest();
         }
 
         #endregion

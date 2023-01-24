@@ -103,6 +103,10 @@
     <Compile Include="ClassUnitTest\Analysis\PortableExecutableTest.cs" />
     <Compile Include="ClassUnitTest\Analysis\SyntaxAnalysis.cs" />
     <Compile Include="ClassUnitTest\ExcelTest\ExcelTestClass.cs" />
+    <Compile Include="ClassUnitTest\FSM\CharacterFSMs.cs" />
+    <Compile Include="ClassUnitTest\FSM\FSMBase.cs" />
+    <Compile Include="ClassUnitTest\FSM\FSMDefine.cs" />
+    <Compile Include="ClassUnitTest\FSM\FSMTest.cs" />
     <Compile Include="ClassUnitTest\Iteration\IterationTest.cs" />
     <Compile Include="ClassUnitTest\LambdaVariableCaptureTest\LambdaVariableCaptureClass.cs" />
     <Compile Include="ClassUnitTest\Multithreading\MultithreadingTest.cs" />
