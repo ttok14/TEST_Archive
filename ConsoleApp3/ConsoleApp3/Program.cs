@@ -24,6 +24,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 using static System.Console;
 using System.Runtime.CompilerServices;
+using System.Buffers;
 
 //using ConsoleApp3.ClassUnitTest.ConvarianceTest;
 
@@ -62,6 +63,8 @@ using System.Runtime.CompilerServices;
 /// <see cref="ConsoleApp3.Program.EnumerateDirectoryRecursivelyTest"/> 파일 디렉터리를 Recuesively 탐색 테스트 
 /// <see cref="ConsoleApp3.Program.MultithreadingTest"/> 멀티쓰레딩 관련 테스트
 /// <see cref="ConsoleApp3.Program.FSMTest"/> Character 의 Behaviour 을 FSM 화 테스트 
+/// ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -- .Net 버전업 -- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+/// <see cref="ConsoleApp3.Program.BufferAndStreamTest"/>
 /// </summary>
 namespace ConsoleApp3
 {
@@ -95,6 +98,21 @@ namespace ConsoleApp3
             }
 
             Console.Write(str.ToString() + paddingStr);
+        }
+
+        static void PrintStart(string subject)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"::■■■■■■■■■■ START ({subject}) ■■■■■■■■■■::");
+            Console.WriteLine();
+        }
+
+        static void PrintEnd(string subject)
+        {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine($"::■■■■■■■■■■ END ({subject}) ■■■■■■■■■■::");
+            Console.WriteLine();
         }
 
         static void PadLines(int lineCount = 1, bool printSeparator = false)
@@ -176,7 +194,8 @@ namespace ConsoleApp3
             // PortableExecutableTest();
             // EnumerateDirectoryRecursivelyTest();
             // MultithreadingTest();
-            FSMTest();
+            // FSMTest();
+            BufferAndStreamTest();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -2498,6 +2517,74 @@ namespace ConsoleApp3
         {
             var fsm = new ConsoleApp3.ClassUnitTest.FSM.FSMTest();
             fsm.RunTest();
+        }
+
+        #endregion
+
+        #region ====:: Buffer / Stream 테스트 ::====
+
+        /*
+         * 버퍼(Buffer): 메모리 상의 연속된 공간 (예: byte[] 배열)
+         * 스트림(Stream): 데이터를 한 방향으로 흐르듯 읽거나 쓰는 개념
+         * 버퍼 + 스트림 = 데이터를 버퍼에 차곡차곡 저장한 뒤 나중에 꺼내 쓰거나 (파일, 네트워크 등)
+         * ArrayBufferWriter<T>는 “메모리 버퍼를 동적으로 확장하면서 데이터를 기록할 수 있게 해주는 Writer” 역할.
+        */
+        static void BufferAndStreamTest()
+        {
+            using (var ms = new MemoryStream())
+            {
+                #region ====:: MemoryStream 으로 데이터 Write 하고 Read 하기 ::====
+
+                PrintStart("MemoryStream 테스트");
+
+                Console.WriteLine("MemoryStream | 한번에 Write, Read 하기");
+
+                byte[] data = Encoding.UTF8.GetBytes("HI, It's been a while! HEY i am back!");
+                Console.WriteLine($"Write 전 Length : {ms.Length}, Position : {ms.Position}");
+                ms.Write(data, 0, data.Length);
+                Console.WriteLine($"Write 후 Length : {ms.Length}, Position : {ms.Position}");
+
+                // 작업 위치를 처음으로 돌림 
+                ms.Position = 0;
+                // 이제는 소문자 "hi" 를 생성 
+                byte[] newData = Encoding.UTF8.GetBytes("hi");
+                // 가장 앞에다가 "hi" 를 Write 함 
+                ms.Write(newData, 0, newData.Length);
+
+                // 위에 Write 에서 Position 이 옮겨졌기때문에 다시 앞으로 땡김
+                ms.Position = 0;
+
+                // 현재 메모리 스트림에있는 모든 바이트를 담을 수 있는 크기의 버퍼 할당 
+                byte[] buffer = new byte[ms.Length];
+                // 메모리 스트림의 처음부터 끝까지 쭉 다 읽어서 buffer 에 저장함 
+                int bytesRead = ms.Read(buffer, 0, buffer.Length);
+                Console.WriteLine(bytesRead + " , " + buffer.Length);
+                Console.WriteLine($"읽은 바이트 수 : {bytesRead}");
+                string readText = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                Console.WriteLine($"읽어들인 텍스트 : {readText}");
+
+                #endregion
+
+                PrintL("---------------------");
+
+                #region ====:: 하나씩 읽기 ::====
+
+                Console.WriteLine("MemoryStream | 하나씩 읽기");
+
+                ms.Position = 0;
+
+                for (int i = 0; i < data.Length; i++)
+                {
+                    // MemoryStream 에서 바이트 하나를 읽음 
+                    int b = ms.ReadByte();
+                    // char 타입 캐스팅 출력
+                    Console.Write((char)b);
+                }
+
+                PrintEnd("MemoryStream 테스트");
+
+                #endregion
+            }
         }
 
         #endregion

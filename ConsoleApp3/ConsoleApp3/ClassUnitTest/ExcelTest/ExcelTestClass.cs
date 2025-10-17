@@ -13,10 +13,10 @@ namespace ConsoleApp3
         {
             // COM 오브젝트들 생성. 
 
-            Excel.Application xlApp = new Excel.Application();
-            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(AppDomain.CurrentDomain.BaseDirectory + "sandbox_test.xlsx");
-            Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
-            Excel.Range xlRange = xlWorksheet.UsedRange;
+            //Excel.Application xlApp = new Excel.Application();
+            //Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(AppDomain.CurrentDomain.BaseDirectory + "sandbox_test.xlsx");
+            //Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+            //Excel.Range xlRange = xlWorksheet.UsedRange;
 
 
         }
