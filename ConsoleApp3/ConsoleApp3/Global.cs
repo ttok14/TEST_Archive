@@ -12,21 +12,22 @@ using System.Runtime.CompilerServices;
 
 namespace ConsoleApp3
 {
-    static class ProjectUtility
+    static class Global
     {
-        public static readonly string TestDataStoragePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JayceExperimentProjectDataCollection";
+        // public static readonly string TestDataStoragePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JayceExperimentProjectDataCollection";
+
+        // 프로젝트 오른쪽 마우스 클릭 => 속성 => 글로벌 => 디버그 시작 프로필 UI 열기 > <작업 디렉터리> 에 $(ProjectDir) 라고 설정하고 나면
+        /// <see cref="Environment.CurrentDirectory"/> 에 프로젝트 파일 (.csproj) 의 경로가 들어감. 참고.
+        public static readonly string TEST_DATA_DIRECTORY = Path.Combine(Environment.CurrentDirectory, "TestData");
 
         public static void SetupTestEnvironment()
         {
-            if (Directory.Exists(TestDataStoragePath) == false)
-            {
-                Directory.CreateDirectory(TestDataStoragePath);
-            }
+
         }
 
-        public static void OpenDataStorageFolder()
+        public static void OpenDataFolder()
         {
-            System.Diagnostics.Process.Start(TestDataStoragePath);
+            System.Diagnostics.Process.Start(TEST_DATA_DIRECTORY);
         }
 
         public static void Shuffle<T>(this List<T> list)
@@ -45,25 +46,25 @@ namespace ConsoleApp3
             }
         }
 
-        public static byte[] Serialize_BinaryFormatter(object obj)
-        {
-            BinaryFormatter bf = new BinaryFormatter();
+        //public static byte[] Serialize_BinaryFormatter(object obj)
+        //{
+        //    BinaryFormatter bf = new BinaryFormatter();
 
-            using (var ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        bf.Serialize(ms, obj);
+        //        return ms.ToArray();
+        //    }
+        //}
 
-        public static object Deserialize_BinaryFormatter(byte[] data)
-        {
-            using (var ms = new MemoryStream(data))
-            {
-                var binForm = new BinaryFormatter();
-                return binForm.Deserialize(ms);
-            }
-        }
+        //public static object Deserialize_BinaryFormatter(byte[] data)
+        //{
+        //    using (var ms = new MemoryStream(data))
+        //    {
+        //        var binForm = new BinaryFormatter();
+        //        return binForm.Deserialize(ms);
+        //    }
+        //}
 
         public static string ToBinary(this string data, bool formatBits = false)
         {

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExperimentProject": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}

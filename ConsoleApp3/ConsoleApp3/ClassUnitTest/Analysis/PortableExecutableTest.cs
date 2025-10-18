@@ -22,7 +22,7 @@ namespace ConsoleApp3.ClassUnitTest.Analysis
         public void CompileAndSaveDLL_Test()
         {
             // 현재 .cs SourceCode File 이 위치한 Directory 가져옴 (어느 Machine 에서도 실행되게)
-            var path = ProjectUtility.GetCallerFilePath();
+            var path = Global.GetCallerFilePath();
             var curCsLocation = Path.GetDirectoryName(path);
 
             // - 혹시 이미 만들어진거 있으면 미리 삭제 - 

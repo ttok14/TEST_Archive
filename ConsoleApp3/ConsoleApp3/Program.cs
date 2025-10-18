@@ -64,7 +64,7 @@ using System.Buffers;
 /// <see cref="ConsoleApp3.Program.MultithreadingTest"/> 멀티쓰레딩 관련 테스트
 /// <see cref="ConsoleApp3.Program.FSMTest"/> Character 의 Behaviour 을 FSM 화 테스트 
 /// ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -- .Net 버전업 -- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-/// <see cref="ConsoleApp3.Program.BufferAndStreamTest"/>
+/// <see cref="ConsoleApp3.Program.BufferAndStreamTest01"/>
 /// </summary>
 namespace ConsoleApp3
 {
@@ -100,14 +100,14 @@ namespace ConsoleApp3
             Console.Write(str.ToString() + paddingStr);
         }
 
-        static void PrintStart(string subject)
+        static void PrintStart(string subject = "")
         {
             Console.WriteLine();
             Console.WriteLine($"::■■■■■■■■■■ START ({subject}) ■■■■■■■■■■::");
             Console.WriteLine();
         }
 
-        static void PrintEnd(string subject)
+        static void PrintEnd(string subject = "")
         {
             Console.WriteLine();
             Console.WriteLine();
@@ -157,7 +157,7 @@ namespace ConsoleApp3
         static void Main(string[] args)
         {
             //// 기본 테스트 환경 세팅 . ///////////
-            ProjectUtility.SetupTestEnvironment();
+            Global.SetupTestEnvironment();
             //////////////////////////////////////
 
             // 이 밑에서 테스트 진행 
@@ -195,7 +195,8 @@ namespace ConsoleApp3
             // EnumerateDirectoryRecursivelyTest();
             // MultithreadingTest();
             // FSMTest();
-            BufferAndStreamTest();
+            // BufferAndStreamTest01();
+            TestFileStream_ReadAsync();
 
             #region Async 테스트 (Case 별)
             //AsyncTest(AsyncTestCase.AsyncVoidEventHandler);
@@ -250,76 +251,76 @@ namespace ConsoleApp3
         #region 제이스 테스트 코드
 
         // 주의 ** 바이너리로 만들 class 는 [Serializable] attribute 가 추가돼있어야함. 태그 . 
-        static void WriteBinaryFormatterAndSaveAsFile()
-        {
-            // 이런 방법으로도 초기화가능함. 
-            var data = new BinaryFormatterTestClass01[] {
-                new BinaryFormatterTestClass01() { vInt = 10, vFloat = 20 , vStr = "first" },
-                new BinaryFormatterTestClass01() { vInt = 20, vFloat = 30, vStr  = "second" },
-                new BinaryFormatterTestClass01() { vInt = 30, vFloat =40  , vStr = "third" } };
+        //static void WriteBinaryFormatterAndSaveAsFile()
+        //{
+        //    // 이런 방법으로도 초기화가능함. 
+        //    var data = new BinaryFormatterTestClass01[] {
+        //        new BinaryFormatterTestClass01() { vInt = 10, vFloat = 20 , vStr = "first" },
+        //        new BinaryFormatterTestClass01() { vInt = 20, vFloat = 30, vStr  = "second" },
+        //        new BinaryFormatterTestClass01() { vInt = 30, vFloat =40  , vStr = "third" } };
 
-            string outputDir = ProjectUtility.TestDataStoragePath;
+        //    string outputDir = ProjectUtility.TestDataStoragePath;
 
-            // 맨앞에 역슬래쉬 넣으니까 에러남 뭐임 ? 
-            // 무튼 데이터(.dat) 파일 생성하고 FileMode.Create 니까 Write 권한 획득됨. 
-            //** 참고로 using 문이 FileStream 의 Dispose 를 호출하고 이 안에서 Close() 도 되기 때문에 별도로 Close 호출 안했음 **//
-            using (var fs = new FileStream(outputDir + "/binaryFormatterResultFile.dat", FileMode.Create))
-            {
-                var bf = new BinaryFormatter();
-                // 직렬화해서 쭉 넣어줌 
-                bf.Serialize(fs, data);
-                ProjectUtility.OpenDataStorageFolder();
-            }
+        //    // 맨앞에 역슬래쉬 넣으니까 에러남 뭐임 ? 
+        //    // 무튼 데이터(.dat) 파일 생성하고 FileMode.Create 니까 Write 권한 획득됨. 
+        //    //** 참고로 using 문이 FileStream 의 Dispose 를 호출하고 이 안에서 Close() 도 되기 때문에 별도로 Close 호출 안했음 **//
+        //    using (var fs = new FileStream(outputDir + "/binaryFormatterResultFile.dat", FileMode.Create))
+        //    {
+        //        var bf = new BinaryFormatter();
+        //        // 직렬화해서 쭉 넣어줌 
+        //        bf.Serialize(fs, data);
+        //        ProjectUtility.OpenDataStorageFolder();
+        //    }
 
-            // 다시 deserialize 해서 가져오는 코드 
-            using (var fs = new FileStream(outputDir + "/binaryFormatterResultFile.dat", FileMode.Open))
-            {
-                var bf = new BinaryFormatter();
+        //    // 다시 deserialize 해서 가져오는 코드 
+        //    using (var fs = new FileStream(outputDir + "/binaryFormatterResultFile.dat", FileMode.Open))
+        //    {
+        //        var bf = new BinaryFormatter();
 
-                var result = bf.Deserialize(fs) as BinaryFormatterTestClass01[];
+        //        var result = bf.Deserialize(fs) as BinaryFormatterTestClass01[];
 
-                for (int i = 0; i < result.Length; i++)
-                {
-                    Console.WriteLine(result[i].vInt + " " + result[i].vFloat + " " + result[i].vStr);
-                }
-            }
-        }
+        //        for (int i = 0; i < result.Length; i++)
+        //        {
+        //            Console.WriteLine(result[i].vInt + " " + result[i].vFloat + " " + result[i].vStr);
+        //        }
+        //    }
+        //}
 
-        // MemoryStream, BinaryFormatter 로 serialized,deserialize 테스트 
-        static void SerializeDeserializeByFormatterTest()
-        {
-            // 원래 데이터 
-            string oriData = "IamSoGosu";
-            byte[] bytes;
+        //// MemoryStream, BinaryFormatter 로 serialized,deserialize 테스트 
+        //static void SerializeDeserializeByFormatterTest()
+        //{
+        //    // 원래 데이터 
+        //    string oriData = "IamSoGosu";
+        //    byte[] bytes;
 
-            PrintL("Original Text : " + oriData);
+        //    PrintL("Original Text : " + oriData);
 
-            ///////////////// 바이트로 직렬화하기  ////////////////////
+        //    ///////////////// 바이트로 직렬화하기  ////////////////////
 
-            // 메모리 스트림 할당함 . formatter 가 직렬화 데이터를 넣을 스트림 
-            // using 은 MemoryStream 에 Dispose 가 있기때문 
-            using (var memoryStream = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                // 직렬화함 . stream 에 씀 . 
-                formatter.Serialize(memoryStream, oriData);
-                // 메모리 스트림에 쓴걸 바이트로 변환 
-                bytes = memoryStream.ToArray();
-                PrintL("Serialized Object Byte Length : " + bytes.Length);
-            }
+        //    // 메모리 스트림 할당함 . formatter 가 직렬화 데이터를 넣을 스트림 
+        //    // using 은 MemoryStream 에 Dispose 가 있기때문 
+        //    using (var memoryStream = new MemoryStream())
+        //    {
+        //        var formatter = new BinaryFormatter();
+        //        // 직렬화함 . stream 에 씀 . 
+        //        formatter.Serialize(memoryStream, oriData);
+        //        // 메모리 스트림에 쓴걸 바이트로 변환 
+        //        bytes = memoryStream.ToArray();
+        //        PrintL("Serialized Object Byte Length : " + bytes.Length);
+        //    }
 
-            //////////////// 원래 데이터로 역직렬화 //////////////////
+        //    //////////////// 원래 데이터로 역직렬화 //////////////////
 
-            // 메모리 스트림 다시 할당 
-            // 생성자에 바이트 넘겨주면 걍 바로 스트림에 씀 
-            using (var memoryStream = new MemoryStream(bytes))
-            {
-                var formatter = new BinaryFormatter();
-                // deserialize 를 하고 그걸 string 으로 형변환 
-                var deserializedString = formatter.Deserialize(memoryStream) as string;
-                PrintL("Deserialized Result String : " + deserializedString);
-            }
-        }
+        //    // 메모리 스트림 다시 할당 
+        //    // 생성자에 바이트 넘겨주면 걍 바로 스트림에 씀 
+        //    using (var memoryStream = new MemoryStream(bytes))
+        //    {
+        //        var formatter = new BinaryFormatter();
+        //        // deserialize 를 하고 그걸 string 으로 형변환 
+        //        var deserializedString = formatter.Deserialize(memoryStream) as string;
+        //        PrintL("Deserialized Result String : " + deserializedString);
+        //    }
+        //}
 
         // zip 파일 압축하기 압축풀기 extract 하기 등등 테스트 코드 @@ 
         // ionic zip 라이브러리 필요 . nuget에서 다운가능
@@ -329,7 +330,7 @@ namespace ConsoleApp3
 
             using (ZipFile zip = new ZipFile())
             {
-                string dir = ProjectUtility.TestDataStoragePath + "/ionicTestResult";
+                string dir = Global.TEST_DATA_DIRECTORY + "/ionicTestResult";
 
                 // 존재하면 암것도 안하고 없으면 생성 . 
                 Directory.CreateDirectory(dir);
@@ -370,7 +371,7 @@ namespace ConsoleApp3
                     zip.ExtractExistingFile = ExtractExistingFileAction.OverwriteSilently;
                     zip.ExtractAll(dir + @"\Exctracted");
 
-                    ProjectUtility.OpenDataStorageFolder();
+                    Global.OpenDataFolder();
                 }
             }
         }
@@ -1961,57 +1962,57 @@ namespace ConsoleApp3
 
         // 암호화 테스트 . 주로 객체를 바이트로 serialize 한 후 해당 바이트를 
         // 부호화한 다음(암호화) 다시 복호화하여 원래 데이터를 가져오는게 주 목적 
-        static void EncryptionDecryptionTest()
-        {
-            EncryptionTestClass testClass = new EncryptionTestClass()
-            {
-                name = "MyNameIs Zian",
-                age = 15531
-            };
-            EncryptionTestClass decryptedClass;
+        //static void EncryptionDecryptionTest()
+        //{
+        //    EncryptionTestClass testClass = new EncryptionTestClass()
+        //    {
+        //        name = "MyNameIs Zian",
+        //        age = 15531
+        //    };
+        //    EncryptionTestClass decryptedClass;
 
-            byte[] sourceBytes = ProjectUtility.Serialize_BinaryFormatter(testClass);
+        //    byte[] sourceBytes = ProjectUtility.Serialize_BinaryFormatter(testClass);
 
-            PrintL("원래 데이터 - " + testClass.ToString());
-            PrintL("원래 데이터 바이트 크기 : " + sourceBytes.Length, 1);
+        //    PrintL("원래 데이터 - " + testClass.ToString());
+        //    PrintL("원래 데이터 바이트 크기 : " + sourceBytes.Length, 1);
 
-            {
-                ///////////// RijndaelManaged 암호화 ///////////
+        //    {
+        //        ///////////// RijndaelManaged 암호화 ///////////
 
-                // AES( Advanced Encryption Standard ) 오리지널 이름은 Rijndael 
-                string aesKey = "a1D5g7Nkl8o6T2bgRF6qshmlpo87sfvs"; // 키값 , 열쇠라 생각하면됨 . 이 열쇠로 잠그고 여는거임. 
-                byte[] keyArray = Encoding.UTF8.GetBytes(aesKey);
+        //        // AES( Advanced Encryption Standard ) 오리지널 이름은 Rijndael 
+        //        string aesKey = "a1D5g7Nkl8o6T2bgRF6qshmlpo87sfvs"; // 키값 , 열쇠라 생각하면됨 . 이 열쇠로 잠그고 여는거임. 
+        //        byte[] keyArray = Encoding.UTF8.GetBytes(aesKey);
 
-                // dispose 유의 
-                using (var rDel = new RijndaelManaged())
-                {
-                    ///// 부호화 관련 세팅 
-                    rDel.Key = keyArray;
-                    rDel.Mode = CipherMode.ECB; // 암호화 모드? 즉 직접적인 알고리즘과도 연관있는듯함. 
-                    rDel.Padding = PaddingMode.PKCS7; // 해당 대칭알고리즘에서 사용될 Padding. 디폴트 : PKCS7
-                    ICryptoTransform cTransform = rDel.CreateEncryptor();
-                    byte[] encryptedBytes = cTransform.TransformFinalBlock(sourceBytes, 0, sourceBytes.Length);
+        //        // dispose 유의 
+        //        using (var rDel = new RijndaelManaged())
+        //        {
+        //            ///// 부호화 관련 세팅 
+        //            rDel.Key = keyArray;
+        //            rDel.Mode = CipherMode.ECB; // 암호화 모드? 즉 직접적인 알고리즘과도 연관있는듯함. 
+        //            rDel.Padding = PaddingMode.PKCS7; // 해당 대칭알고리즘에서 사용될 Padding. 디폴트 : PKCS7
+        //            ICryptoTransform cTransform = rDel.CreateEncryptor();
+        //            byte[] encryptedBytes = cTransform.TransformFinalBlock(sourceBytes, 0, sourceBytes.Length);
 
-                    PrintL("RijndaelManagedKey 부호화(암호화) 바이트 크기 : " + encryptedBytes.Length);
+        //            PrintL("RijndaelManagedKey 부호화(암호화) 바이트 크기 : " + encryptedBytes.Length);
 
-                    ///// 복호화 관련 세팅 
-                    cTransform = rDel.CreateDecryptor();
-                    byte[] decryptedByte = cTransform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-                    var decryptedResult = ProjectUtility.Deserialize_BinaryFormatter(decryptedByte) as EncryptionTestClass;
+        //            ///// 복호화 관련 세팅 
+        //            cTransform = rDel.CreateDecryptor();
+        //            byte[] decryptedByte = cTransform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+        //            var decryptedResult = ProjectUtility.Deserialize_BinaryFormatter(decryptedByte) as EncryptionTestClass;
 
-                    PrintL("RijndaelManagedKey 복호화 결과 : " + decryptedResult.ToString());
-                }
-            }
+        //            PrintL("RijndaelManagedKey 복호화 결과 : " + decryptedResult.ToString());
+        //        }
+        //    }
 
-            {
-                // dispose 유의 
-                using (MD5 md5Hash = MD5.Create())
-                {
-                    // https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.md5?view=netframework-4.8 참고 
-                    PrintL("Fix!!");
-                }
-            }
-        }
+        //    {
+        //        // dispose 유의 
+        //        using (MD5 md5Hash = MD5.Create())
+        //        {
+        //            // https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.md5?view=netframework-4.8 참고 
+        //            PrintL("Fix!!");
+        //        }
+        //    }
+        //}
 
         // 인코딩 테스트 
         static void EncodingTest()
@@ -2427,7 +2428,7 @@ namespace ConsoleApp3
             WriteLine(projectDirectory2);
 
             // 현재 .cs SourceCode File 이 위치한 Directory 가져옴
-            var path = ProjectUtility.GetCallerFilePath();
+            var path = Global.GetCallerFilePath();
             var curCsLocation = Path.GetDirectoryName(path);
         }
 
@@ -2529,7 +2530,7 @@ namespace ConsoleApp3
          * 버퍼 + 스트림 = 데이터를 버퍼에 차곡차곡 저장한 뒤 나중에 꺼내 쓰거나 (파일, 네트워크 등)
          * ArrayBufferWriter<T>는 “메모리 버퍼를 동적으로 확장하면서 데이터를 기록할 수 있게 해주는 Writer” 역할.
         */
-        static void BufferAndStreamTest()
+        static void BufferAndStreamTest01()
         {
             using (var ms = new MemoryStream())
             {
@@ -2584,6 +2585,85 @@ namespace ConsoleApp3
                 PrintEnd("MemoryStream 테스트");
 
                 #endregion
+            }
+        }
+
+        /// !! 테스트와는 상관없지만, 참고로 ,
+        /// 이 async void 함수를 호출하는 측에서는 try {} catch {} 로
+        /// Exception 을 catch 할 수가 없음. 왜냐면 async 인 비동기 함수에서 예외가 발생하면
+        /// Task 을 리턴하는 경우에는 <see cref="Task.Exception"/> 에 예외를 넣어서 await 으로 호출측으로 예외를 throw 하지만 
+        /// async void 같은 경우는 Exception 을 넣을  Task 가 없기 때문에 현재 Synchronization Context 인가? (더 조사 필요)
+        /// 여기에다가 throw 한다고 함. 
+        /// 그리고 참고로, Task 이던 아니던 만약 async 함수를 await 로 기다리지 않고 동기 함수처럼 그냥 지나쳐버리면 (컴파일러가 주의줌)
+        /// 이 또한 try catch 에 안잡힘. 당연하지. 왜냐면 코드 실행 흐름이 이미 지나쳐버렸으니까. 이 부분 조금 더 공부할것.
+        static async void TestFileStream_ReadAsync()
+        {
+            await DoTest();
+
+            async Task DoTest()
+            {
+                // 주어진 Path 파일 스트림을 열음
+                /// BufferSize 는 4096 , useAsync 는 True
+                ///     => 일단 이해해야 하는 개념
+                ///             1. File 의 크기가 1GB 라 치자. 그러면 Stream 을 통해 File 의 내용을 전송받게 되는데
+                ///                저장장치에 저장돼있는 파일에 대한 접근 속도는 굉장히 느리다. 즉 우리가 이 파일을 가져온다는 것은
+                ///                바로 여기서 사용할 수 있는 건데, 여기서 접근이 된단 것은 그게 메모리에 로드가 되었단 의미이다.
+                ///             2. 저장장치에서 메모리 공간에 로드가 돼야하는데, 파일이 1GB 라고 하면 이 큰걸 한번에 가져오는 것 대신 
+                ///                 Strema 을 통해 나눠서 가져오게 된다. 여기서, 스트림이 파일의 일부를 가져올때 그 '일부' 의 
+                ///                 바이트 크기가 BufferSize 즉 4096 Byte 로 설정한 것. 
+                ///                 => 이게 왜 중요하냐?
+                ///                     실제로 메모리로 가져와야 하는 파일이 저 먼 저장장치에 있기 때문에 퍼 나르는 바이트 크기가 작으면 
+                ///                     작을 수록 더 여러번 왔다갔다 해야하기 때문. 왔다갔다 횟수가 적으면 적을수록 빨리 파일을 가져오겠지.
+                ///                 => 하지만 그렇다고 무조건 퍼나르는 크기가 엄청 크다고 좋냐? 아님. 어쨌던 저 BufferSize 을 메모리에
+                ///                     할당해서 그 안에 복사후 가져오는거 기 때문에, 그 BufferSize 만큼의 공간은 작업하는 동안 메모리 할당이
+                ///                     필요함. 즉 1GB 짜리를 가져온다고 1GB 만큼의 BufferSize 를 할당하는 것은 가져오는건 한번에 가져오겠지만 
+                ///                     메모리 퍼포먼스가 엄청 떨어지겠지. 결국에는 적절한 BufferSize 를 설정해줘야 하는데, 
+                ///                     비동기적으로 I/O 작업을 할때는 실제 OS 가 파일을 읽는 기본 단위가 4096 인 경우가 대부분이라고 해서 이와 
+                ///                     일치시켜서 효율을 높이기 위한 크기임 . 
+                ///                         => 이게 무슨 말이냐면, 파일은 저장 장치에 있음. 그리고 보통 OS 의 파일 관리 시스템에서는 블록으로 나누어서 
+                ///                             저장 장치를 관리하기 때문에 이 블록 크기가 중요. 즉, 이 하나의 블록 크기가 대부분 4096Byte 즉 4KB 라는 것 .
+                ///                         => 이게 무슨말이냐? 우리가 파일의 4096 이 아닌 4097 바이트를 읽어오고 싶다고 하자 . 그러면 OS 는 파일에 접근해서
+                ///                             4097 바이트만큼 읽어야하는데, 문제는 OS 는 그 파일을 읽을때 한 블록씩 끊어서 읽어들임 . 즉 4096 바이트씩
+                ///                             끊어서 읽어들인 다는 의미 . 즉 4096 바이트를 읽기 위해서는 먼저 앞에 4096 바이트를 읽음. 그 다음에 1바이트를
+                ///                             더 읽어야 하는데, 이때 1 바이트만 읽는게 아니라 4096 바이트를 읽은 다음에 앞에있는 그 1 바이트만 복사해 가져오는거
+                ///                         => 즉, 읽어들일때 낭비되는 공간이 발생함. 이런 이유로 파일을 읽어야 하는 IO 를 요청할때는 OS 가 읽는 단위인 4096 의 
+                ///                             배수로 BufferSize 를 일치시키는게 좋음. 그럼 필요한 만큼만 OS 가 딱 읽어서 가져옴. 낭비되는 부분이 없음 ! 
+                ///                 => 결론은, 파일을 실제로 읽어올때 BufferSize 만큼씩 나누어서 읽어온다.
+                ///             3. useAsync
+                ///                 => True 로 설정시 : 이거는 , 실제로 Stream 이 파일 내용을 가져와야 할때, OS(운영체제) 에게 완전히 위임해서 그 작업을 맡긴 쓰레드는 
+                ///                     다른 작업을 하러 갈 수 있 게된다. 즉, Blocking(블로킹) 이 걸리지 않음. 즉 NonBlocking으로 동작.
+                ///                 => False 로 설정시 : 이거는 OS 에게 I/O 작업을 요청한 쓰레드가 한없이 계속 끝날때까지 기다리게됨. 
+                ///                     그래서 False 로 설정시 , await 를 해서 Async 로 읽어오게 되면 별도의 쓰레드풀에 있는 쓰레드가 그 작업을 블로킹 방식으로
+                ///                     기다리고 있게됨. 하지만 쓰레드풀에 있는 쓰레드에 돌리기 때문에 논블로킹으로 보일뿐 , 실제로는 그 해당 쓰레드는 블로킹 상태가 되므로
+                ///                     낭비되는 자원이 발생. 
+                ///                 => 웬만한 경우는 True 로 설정. 
+
+                using (FileStream fs = new FileStream(Path.Combine(Global.TEST_DATA_DIRECTORY, "LargeTextFile.txt"), FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true))
+                {
+                    int bytesRead = 0;
+
+                    /// FileStream 은 가만히 있으면 자기가 알아서 OS 한테 요청하고 파일을 읽어오는게 아니라,
+                    /// 함수에 접근해서 요청을 해야 그제서야 루틴이 돌아감.
+                    /// 이 순서를 이해해보자.
+                    ///     1. ReadAsync() 로 FileStream 에 '읽기 요청' 즉 '저 chunk.Length 만큼 읽어서 chunk 바이트에 채워주세요 !
+                    ///     2. FileStream 이 체크한다. 자신이 준비해놓은 Buffer 에 데이터가 충분히 있는지, 부족하다면 다시 OS 에게 부탁해서 
+                    ///         FileStream 을 만들었을때 지정했던 BufferSize 만큼 가져와 달라고 요청한다.
+                    ///     3. OS 는 BufferSize 만큼 읽은 데이터를 FileStream 의 내부 byte[] 에 채워넣어준다. (!OS 가 해줌!)
+                    ///     4. 이제 실제 아래에 있는 chunk 바이트 버퍼에 복사를 해서 채워넣어줘야하는데, 이건 FileStrema 이 한다. (!FileStream 이 해줌!)
+                    ///     5. 이후에 Read 된 복사된 바이트 수를 반환하고 ReadAsync 는 이 결과를 담은 Task<int> 를 반환.</int>
+                    ///     6. 읽어온 바이트
+                    byte[] chunk = new byte[4096];
+                    while ((bytesRead = await fs.ReadAsync(chunk, 0, chunk.Length)) > 0)
+                    {
+                        var bytesToText = Encoding.UTF8.GetString(chunk);
+
+                        PrintStart();
+                        Console.WriteLine($"이번에 읽은 바이트 크기 : {bytesRead}");
+                        Console.WriteLine();
+                        Console.WriteLine($"문자열 변환 버전 : {bytesToText}");
+                        PrintEnd();
+                    }
+                }
             }
         }
 
